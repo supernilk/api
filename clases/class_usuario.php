@@ -69,10 +69,16 @@
 
         //BORRAR token en la BD
         public function borrarToken(){
-            $resultado = $this->conexion->query("DELETE FROM token WHERE ID_Usuario = 3") or die($this->conexion->error);
+            $resultado = $this->conexion->query("DELETE FROM token WHERE ID_Usuario = $this->ID_usuario") or die($this->conexion->error);
             return $resultado ? true : false;
         }
 
+        //BORRAR token en la BD
+        public function guardarToken(){
+            echo ("INSERT INTO token VALUES (null, $this->ID_usuario, $this->token, '234252345235')");
+            $resultado = $this->conexion->query("INSERT INTO token VALUES (null, $this->ID_usuario, '$this->token', '234252345235')") or die($this->conexion->error);
+            return $resultado ? true : false;
+        }
         //ACTUALIZAR en la BD
         public function actualizar($tabla,$campos,$condicion){
             $resultado = $this->conexion->query("UPDATE $tabla SET $campos where $condicion") or die($this->conexion->error);
@@ -138,10 +144,11 @@
             $resultado = count($rows);
             
             if ($resultado > 0){
-                $this->ID_usuario=$rows[0]["ID_Usurio"];
+                $this->ID_usuario=intval($rows[0]["ID_Usuario"]);
                 $this->nombre=$rows[0]["username"];
                 $this->token=$this->crearToken();
                 $this->borrarToken();
+                $this->guardarToken();
                 // borramos el toquen de la bd
                 //if (){
                 //    print_r("token borrado");
