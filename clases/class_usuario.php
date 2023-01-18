@@ -83,6 +83,30 @@
                                                                             )") or die($this->conexion->error);
             return $resultado ? true : false;
         }
+
+        public function consultarToken($token_a_comparar)
+        {
+            $this->abrirConexion();
+
+            $sql="SELECT * FROM token t JOIN usuario u ON t.ID_Usuario=u.ID_Usuario WHERE t.token ='$token_a_comparar'";
+            //print_r($sql);
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = count($resultado->fetch_all(MYSQLI_ASSOC));
+            //print_r($resultado[0]["username"]);
+
+            if ($resultado>0){
+                $this->ID_usuario=intval($resultado[0]["ID_Usuario"]);
+                $this->nombre=$resultado[0]["username"];
+            }
+            //print_r($resultado);
+            //print_r(count($resultado));
+            
+            $this->cerrarConexion();
+            return $resultado > 0 ? true : false;
+        }
+
+
         //ACTUALIZAR en la BD
         public function actualizar($tabla,$campos,$condicion){
             $resultado = $this->conexion->query("UPDATE $tabla SET $campos where $condicion") or die($this->conexion->error);

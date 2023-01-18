@@ -35,8 +35,16 @@
             
             if (isset($_POST["token"])){
 
-                print_r("confirmando token");
-
+                //print_r("confirmando token");
+                //print_r("token:" . $_POST["token"]);
+                $usuario = new Usuario();
+                if ($usuario->consultarToken($_POST["token"])){
+                    print_r("el token es valido ");
+                    print_r("pertenece a :".$usuario->get_Nombre());
+                }else{
+                    print("token invalido, denegado");
+                }
+                
             }else{
                 // se recibe un correo y password del usuario a consultar  
                 if(isset($_POST["correo"])){
