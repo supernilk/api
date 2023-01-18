@@ -7,3 +7,6 @@ BODY - RAW - JSON
     "correo":"jtorres@gmail.com",
     "password":"C123456"
 }
+
+solucionar problemas con $git pull
+https://stackoverflow.com/questions/32056324/there-is-no-tracking-information-for-the-current-branch
