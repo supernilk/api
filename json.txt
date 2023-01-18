@@ -1,0 +1,9 @@
+consultando usuario y contraceña, metodo POST
+http://localhost/api_sin_fronend/api/usuarios.php
+
+BODY - RAW - JSON
+
+{
+    "correo":"jtorres@gmail.com",
+    "password":"C123456"
+}

@@ -75,8 +75,12 @@
 
         //BORRAR token en la BD
         public function guardarToken(){
-            echo ("INSERT INTO token VALUES (null, $this->ID_usuario, $this->token, '234252345235')");
-            $resultado = $this->conexion->query("INSERT INTO token VALUES (null, $this->ID_usuario, '$this->token', '234252345235')") or die($this->conexion->error);
+            
+            $resultado = $this->conexion->query("INSERT INTO token VALUES (null, 
+                                                                            $this->ID_usuario, 
+                                                                            '$this->token', 
+                                                                            '".time()+(60*60*24*7)."'
+                                                                            )") or die($this->conexion->error);
             return $resultado ? true : false;
         }
         //ACTUALIZAR en la BD

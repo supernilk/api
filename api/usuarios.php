@@ -23,7 +23,7 @@
         break;
         
         // pendiente que se envie el json con los datos validos, no null
-        // Crear Uruario
+        // Incertar Usuario (Crear Uruario)
         // se recibe un Json con los datos
         case 'POST':
             //echo 'informacion: '. file_get_contents('php://input')."\n";
@@ -32,51 +32,58 @@
             
             ///$resultado["mensaje"] = "Guardar usuario, informacion:"///.json_encode($_POST);
             ///echo json_encode($resultado);
-            // se recibe un correo y password del usuario a consultar      
             
-            if(isset($_POST["correo"])){
-                // Recibimos un Correo
-                
-                if (isset($_POST["password"])){
+            if (isset($_POST["token"])){
 
-                    $usuario = new Usuario();
-                    $usuario->set_Correo($_POST["correo"]);
-                    $usuario->set_Password($_POST["password"]);
+                print_r("confirmando token");
 
-                    if ($usuario->consultarUsuario()){
-                        http_response_code(200);
-                        //$resultado["token"] = sha1(uniqid(rand()),true);
-                        //$resultado["token"] = str_rand();
-                        $resultado["token"] = $usuario->get_Token();
-                        $resultado["codigoResultado"] = "1";
-                        $resultado["mensaje"] = "Usuario autenticado";
-                        
-                        $usuarioDatos["nombre"]= $usuario->get_Nombre();
-                        $usuarioDatos["correo"]= $usuario->get_Correo();
-                        
-                        $resultado["usuario"]= $usuarioDatos;
-                        
-                        echo json_encode($resultado);
-                    }else{
-                        http_response_code(404);
-                        $resultado["codigoResultado"] = "0";
-                        $resultado["mensaje"] = "Usuario/Password incorrectos";
+            }else{
+                // se recibe un correo y password del usuario a consultar  
+                if(isset($_POST["correo"])){
+                    // Recibimos un Correo
+                    
+                    if (isset($_POST["password"])){
+
+                        $usuario = new Usuario();
+                        $usuario->set_Correo($_POST["correo"]);
+                        $usuario->set_Password($_POST["password"]);
+
+                        if ($usuario->consultarUsuario()){
+                            http_response_code(200);
+
+                            $resultado=array(
+                                "token"=>$usuario->get_Token(),
+                                "codigoResultado"=>"1",
+                                "mensaje" => "Usuario autenticado",
+                                "usuario" => array(
+                                    "nombre" => $usuario->get_Nombre(),
+                                    "correo" => $usuario->get_Correo()
+                                )
+                            );
+                            
+                            echo json_encode($resultado);
+                        }else{
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Usuario/Password incorrectos";
+                            echo json_encode($resultado);
+                        }
+
+                        }else{
+                        http_response_code(400);
+                        // incorrecto tiene usuario falta clave
+                        $resultado["mensaje"] = "Error, Indique password del usuario";
                         echo json_encode($resultado);
                     }
-
-                    }else{
+                        
+                }else{
                     http_response_code(400);
-                    // incorrecto tiene usuario falta clave
-                    $resultado["mensaje"] = "Error, Indique password del usuario";
+                    // no se ha recibido ningun correo
+                    $resultado["mensaje"] = "Error Indique el correo a consultar";
                     echo json_encode($resultado);
                 }
-                    
-            }else{
-                http_response_code(400);
-                // no se ha recibido ningun correo
-                $resultado["mensaje"] = "Error Indique el correo a consultar";
-                echo json_encode($resultado);
             }
+
             /****/
         break;
 
