@@ -8,19 +8,26 @@
     include_once("../clases/class_entidad.php");
     // Recibir las peticiones del usuario
 
-
-    
     switch ($_SERVER['REQUEST_METHOD']){
 
         case 'GET':
-            
             // se recibe un Json con los datos
-            $_POST = json_decode( file_get_contents('php://input'),true);
-                        
-            if (isset($_POST["token"])){
+            
+            //if(isset($_GET["tkn"])){
+            //    echo ("token: por Get".$_GET["tkn"]);
+            //};
+            
+            //if(isset($_POST["tkn"])){
+            //    echo ("token: por post".$_POST["tkn"]);
+            //};
+
+            //$_POST = json_decode( file_get_contents('php://input'),true);
+
+            //if (isset($_POST["token"])){
+            if(isset($_GET["tkn"])){                
 
                 $entidad = new Entidad();
-                if ($entidad->consultarToken($_POST["token"])){
+                if ($entidad->consultarToken($_GET["tkn"])){
                     http_response_code(200);
                     $raws = $entidad->consultarEntidades();
                     echo ( json_encode($raws));
