@@ -64,11 +64,6 @@
             $resultado = count($resultado->fetch_all(MYSQLI_ASSOC));
             //print_r($resultado[0]["username"]);
 
-            if ($resultado>0){
-                $this->ID_usuario=intval($resultado[0]["ID_Usuario"]);
-                $this->nombre=$resultado[0]["username"];
-            }
-            
             $this->cerrarConexion();
             return $resultado > 0 ? true : false;
         }
@@ -90,7 +85,7 @@
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
             $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
-           
+
             // toda coneccion debe cerrarce una vez finalizada la consulta
             $this->cerrarConexion();
             return $resultado;

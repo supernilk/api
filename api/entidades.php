@@ -22,20 +22,8 @@
                 $entidad = new Entidad();
                 if ($entidad->consultarToken($_POST["token"])){
                     http_response_code(200);
-                    print_r("el token es valido ");
-
-                    $resultado=array(
-                        "token"=>"20347092349082349080923xxx",
-                        "codigoResultado"=>"1",
-                        "mensaje" => "Usuario autenticado",
-                        "usuario" => array(
-                            "nombre" => "Pedro",
-                            "correo" => "Perez"
-                        )
-                    );
-                    
-                    echo json_encode($resultado);
-
+                    $raws = $entidad->consultarEntidades();
+                    echo ( json_encode($raws));
                 }else{
                     // Toquen invalido
                     http_response_code(404);
