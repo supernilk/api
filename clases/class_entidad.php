@@ -5,13 +5,13 @@
         //-------------------------------------------
 
         private $DB_HOST       = "localhost";
-        //private $DB_USUARIO    = "ventaso2_admin_sisregin";
-        //private $DB_CONTRA     = "admin*sisregin";
+        private $DB_USUARIO    = "ventaso2_admin_sisregin";
+        private $DB_CONTRA     = "admin*sisregin";
         private $DB_NOMBRE     = "ventaso2_sisregin";
         
         //private $DB_HOST       = "localhost";
-        private $DB_USUARIO    = "root";
-        private $DB_CONTRA     = "";
+        //private $DB_USUARIO    = "root";
+        //private $DB_CONTRA     = "";
         //private $DB_NOMBRE     = "ventaso2_sisregin";
 
         protected $conexion;
@@ -78,7 +78,7 @@
         {       
             $this->abrirConexion();
 
-            $sql="SELECT descripcion FROM tipo_entidad WHERE 
+            $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad WHERE 
                          in_clasificacion_ent in ('CNT','ALM','LOC') and
                          nu_tipo_entidad > 0";
 
@@ -91,6 +91,72 @@
             return $resultado;
         }
         
+        public function consultarEntidad($descripcion)
+        {       
+            $this->abrirConexion();
+
+            $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad WHERE 
+                         in_clasificacion_ent in ('CNT','ALM','LOC') and
+                         nu_tipo_entidad > 0 and descripcion like '%$descripcion%' ";
+
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+        }
+
+        public function consultarTipoEntidad()
+        {       
+            $this->abrirConexion();
+
+            $sql="select nu_entidad, in_clasificacion_ent,descripcion from entidad where in_clasificacion_ent in ('CNT','ALM','LOC')";
+
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+        }
+        
+        public function incertarEntidad($nu_entidad, $in_clasificacion_ent, $descripcion)
+        {       
+            $this->abrirConexion();
+
+            //$resultado = $this->conexion->query("UPDATE $tabla SET $campos where $condicion") or die($this->conexion->error);
+            // calcular el valor de nu_tipo_entidad
+            $nu_tipo_entidad=0;
+            
+            $sql = "SELECT max(nu_tipo_entidad) AS valorMax FROM `tipo_entidad` WHERE `in_clasificacion_ent`='$in_clasificacion_ent'";
+            
+            //print_r($sql);
+            
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            $nu_tipo_entidad= intval($resultado[0]['valorMax'])+1;
+
+            
+
+            $sql="INSERT INTO tipo_entidad VALUES ($nu_tipo_entidad,'$in_clasificacion_ent' , '$nu_entidad', '$in_clasificacion_ent', '$descripcion', 'J-403961441', '7','RIF')";
+            //print_r ($sql);
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            
+            
+            
+            $this->cerrarConexion();
+            return $resultado;
+
+        }
     }
 
 

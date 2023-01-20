@@ -24,19 +24,73 @@
             //$_POST = json_decode( file_get_contents('php://input'),true);
 
             //if (isset($_POST["token"])){
-            if(isset($_GET["tkn"])){                
+            if(isset($_GET["tkn"])){
 
-                $entidad = new Entidad();
-                if ($entidad->consultarToken($_GET["tkn"])){
-                    http_response_code(200);
-                    $raws = $entidad->consultarEntidades();
-                    echo ( json_encode($raws));
+                if(isset($_GET["consulta"]) && ($_GET["consulta"] =='TipoEntidades')){
+                    
+                    $entidad = new Entidad();
+                    if ($entidad->consultarToken($_GET["tkn"])){
+                        http_response_code(200);
+                        $raws = $entidad->consultarTipoEntidad();
+                        echo ( json_encode($raws));
+                    }else{
+                        // Toquen invalido
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }
+
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='Insertar')){
+//---------------------------------------------------------------------------------------------
+                    $entidad = new Entidad();
+                    if ($entidad->consultarToken($_GET["tkn"])){
+                        http_response_code(200);
+                        $raws = $entidad->incertarEntidad($_GET["nu_entidad"], 
+                                                          $_GET["in_clasificacion_ent"],
+                                                          $_GET["descripcion"]                                                          
+                                                          );
+                        echo ( json_encode($raws));
+                    }else{
+                        // Toquen invalido
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }                    
+//---------------------------------------------------------------------------------------------
+
+
+
+                }elseif(isset($_GET["descripcion"])){
+
+                    $entidad = new Entidad();
+                    if ($entidad->consultarToken($_GET["tkn"])){
+                        http_response_code(200);
+                        $raws = $entidad->consultarEntidad($_GET["descripcion"]);
+                        echo ( json_encode($raws));
+                    }else{
+                        // Toquen invalido
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }
+                    
                 }else{
-                    // Toquen invalido
-                    http_response_code(404);
-                    $resultado["codigoResultado"] = "0";
-                    $resultado["mensaje"] = "Acceso Denegado";
-                    echo json_encode($resultado);
+                
+                    $entidad = new Entidad();
+                    if ($entidad->consultarToken($_GET["tkn"])){
+                        http_response_code(200);
+                        $raws = $entidad->consultarEntidades();
+                        echo ( json_encode($raws));
+                    }else{
+                        // Toquen invalido
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }
                 }
                 
             }else{

@@ -1,6 +1,5 @@
 <?php
 
-
     class Usuario {
         private $ID_usuario;
         private $nombre;
@@ -11,13 +10,13 @@
         //-------------------------------------------
 
         private $DB_HOST       = "localhost";
-        //private $DB_USUARIO    = "ventaso2_admin_sisregin";
-        //private $DB_CONTRA     = "admin*sisregin";
+        private $DB_USUARIO    = "ventaso2_admin_sisregin";
+        private $DB_CONTRA     = "admin*sisregin";
         private $DB_NOMBRE     = "ventaso2_sisregin";
         
         //private $DB_HOST       = "localhost";
-        private $DB_USUARIO    = "root";
-        private $DB_CONTRA     = "";
+        //private $DB_USUARIO    = "root";
+        //private $DB_CONTRA     = "";
         //private $DB_NOMBRE     = "ventaso2_sisregin";
 
         protected $conexion;
@@ -76,11 +75,16 @@
         //BORRAR token en la BD
         public function guardarToken(){
             
-            $resultado = $this->conexion->query("INSERT INTO token VALUES (null, 
-                                                                            $this->ID_usuario, 
-                                                                            '$this->token', 
-                                                                            '".time()+(60*60*24*7)."'
-                                                                            )") or die($this->conexion->error);
+            $tiempo = time()+(60*60*24*7);
+            
+            $sql="INSERT INTO token VALUES (null, $this->ID_usuario, '$this->token','$tiempo')";
+            
+            //echo ($sql);
+            
+            //$resultado=1;
+            
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
             return $resultado ? true : false;
         }
 
@@ -177,18 +181,9 @@
                 $this->token=$this->crearToken();
                 $this->borrarToken();
                 $this->guardarToken();
-                // borramos el toquen de la bd
-                //if (){
-                //    print_r("token borrado");
-                //}
-
-                // pendiente:
-                // buscar si el usuario tiene token en la bd, si no lo tiene se crea
-                // si lo tiene se actualiza con el nuevo token generado
 
             }
-            //print_r($resultado);
-            
+
             // toda coneccion debe cerrarce una vez finalizada la consulta
             $this->cerrarConexion();
             return $resultado > 0 ? true : false ;
