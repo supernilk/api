@@ -6,25 +6,15 @@
     header("Content-Type: application/json");
     
     include_once("../clases/class_entidad.php");
-    // Recibir las peticiones del usuario
 
+    // Recibir las peticiones del usuario
     switch ($_SERVER['REQUEST_METHOD']){
 
         case 'GET':
-            // se recibe un Json con los datos
-            
-            //if(isset($_GET["tkn"])){
-            //    echo ("token: por Get".$_GET["tkn"]);
-            //};
-            
-            //if(isset($_POST["tkn"])){
-            //    echo ("token: por post".$_POST["tkn"]);
-            //};
 
-            //$_POST = json_decode( file_get_contents('php://input'),true);
-
-            //if (isset($_POST["token"])){
             if(isset($_GET["tkn"])){
+
+/****************************************************** consulta -> TipoEntidades **********************************************/   
 
                 if(isset($_GET["consulta"]) && ($_GET["consulta"] =='TipoEntidades')){
                     
@@ -41,15 +31,20 @@
                         echo json_encode($resultado);
                     }
 
-                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='Insertar')){
-//---------------------------------------------------------------------------------------------
+/****************************************************** consulta -> Proyecto **********************************************/  
+
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='Proyecto')
+                                                 && (isset($_GET["dni_enterprise"]))
+                                                 && (isset($_GET["nu_tipo_entidad_doc_ent"]))
+                                                 && (isset($_GET["in_clasificacion_tipo_ent_doc_ent"]))
+                                                    ){
+
                     $entidad = new Entidad();
                     if ($entidad->consultarToken($_GET["tkn"])){
                         http_response_code(200);
-                        $raws = $entidad->incertarEntidad($_GET["nu_entidad"], 
-                                                          $_GET["in_clasificacion_ent"],
-                                                          $_GET["descripcion"]                                                          
-                                                          );
+                        $raws = $entidad->consultarProyecto($_GET["dni_enterprise"],
+                                                            $_GET["nu_tipo_entidad_doc_ent"],
+                                                            $_GET["in_clasificacion_tipo_ent_doc_ent"]);
                         echo ( json_encode($raws));
                     }else{
                         // Toquen invalido
@@ -57,17 +52,49 @@
                         $resultado["codigoResultado"] = "0";
                         $resultado["mensaje"] = "Acceso Denegado";
                         echo json_encode($resultado);
-                    }                    
-//---------------------------------------------------------------------------------------------
+                    }
+                    
+/****************************************************** consulta -> filtrar_por_descripcion ********************************/  
 
-
-
-                }elseif(isset($_GET["descripcion"])){
-
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='filtrar_por_descripcion')
+                                                 && (isset($_GET["dni_enterprise"]))
+                                                 && (isset($_GET["nu_tipo_entidad_doc_ent"]))
+                                                 && (isset($_GET["in_clasificacion_tipo_ent_doc_ent"]))
+                                                    ){
+                    
                     $entidad = new Entidad();
                     if ($entidad->consultarToken($_GET["tkn"])){
                         http_response_code(200);
-                        $raws = $entidad->consultarEntidad($_GET["descripcion"]);
+                        $raws = $entidad->consultarEntidad($_GET["filtrar_por_descripcion"],
+                                                           $_GET["dni_enterprise"],
+                                                           $_GET["nu_tipo_entidad_doc_ent"],
+                                                           $_GET["in_clasificacion_tipo_ent_doc_ent"]);
+                        echo ( json_encode($raws));
+                    }else{
+                        // Toquen invalido
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }
+
+/****************************************************** consulta -> filtrar_por_proyecto ********************************/  
+
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='filtrar_por_proyecto')
+                                                              && (isset($_GET["dni_enterprise"]))
+                                                              && (isset($_GET["nu_tipo_entidad_doc_ent"]))
+                                                              && (isset($_GET["in_clasificacion_tipo_ent_doc_ent"]))
+                                                              ){
+                    
+                    $entidad = new Entidad();
+                    if ($entidad->consultarToken($_GET["tkn"])){
+                        http_response_code(200);
+                        $raws = $entidad->filtrar_entidades_por_proyecto($_GET["nu_tipo_entidad_pry"],
+                                                                         $_GET["in_clasificacion_tipo_ent_pry"],
+                                                                         $_GET["dni_enterprise"], 
+                                                                         $_GET["nu_tipo_entidad_doc_ent"],
+                                                                         $_GET["in_clasificacion_tipo_ent_doc_ent"]
+                                                                         );
                         echo ( json_encode($raws));
                     }else{
                         // Toquen invalido
@@ -78,23 +105,43 @@
                     }
                     
                 }else{
-                
-                    $entidad = new Entidad();
-                    if ($entidad->consultarToken($_GET["tkn"])){
-                        http_response_code(200);
-                        $raws = $entidad->consultarEntidades();
-                        echo ( json_encode($raws));
+
+/********************************************************* consultar todas las Entidades ******************************************************/                    
+
+                    if (isset($_GET["tkn"]) && isset($_GET["dni_enterprise"]) && isset($_GET["nu_tipo_entidad_doc_ent"]) && isset($_GET["in_clasificacion_tipo_ent_doc_ent"]) ){
+                        // cuando solo se recibe token
+                        $entidad = new Entidad();
+                        if ($entidad->consultarToken($_GET["tkn"])){
+                            http_response_code(200);
+                            
+                            $entidad->dni_enterprise = $_GET["dni_enterprise"];
+                            $entidad->nu_tipo_entidad_doc_ent = $_GET["nu_tipo_entidad_doc_ent"];
+                            $entidad->in_clasificacion_tipo_ent_doc_ent = $_GET["in_clasificacion_tipo_ent_doc_ent"];
+                            
+                            $raws = $entidad->consultarEntidades();
+                            echo ( json_encode($raws));
+                        }else{
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado";
+                            echo json_encode($resultado);
+                        }
+                        
                     }else{
-                        // Toquen invalido
-                        http_response_code(404);
-                        $resultado["codigoResultado"] = "0";
-                        $resultado["mensaje"] = "Acceso Denegado";
-                        echo json_encode($resultado);
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado, Token invalido, o faltan valores de la empresa";
+                            echo json_encode($resultado);
                     }
                 }
                 
             }else{
-                // no venvio el token
+
+/*---------------------------------------------------------- no envio el token -------------------------------------------------------*/
+/*  si entra aqui es por que no se envio la palabra tkn como parametro requerido para cualquier consulta*/
+
                 http_response_code(404);
                 $resultado["codigoResultado"] = "0";
                 $resultado["mensaje"] = "Acceso Denegado";
@@ -105,45 +152,119 @@
         
         
         case 'POST':
-            //convertimos el json en array descriptivo
-            
+/****************************************************** consulta -> Insertar *****************************************************/  
 
+            if(isset($_POST["consulta"]) && ($_POST["consulta"] =='Insertar')){
+                    $entidad = new Entidad();
+
+                    if ($entidad->consultarToken($_POST["tkn"])){
+
+                        $consulta = $entidad->insertarEntidad($_POST["nu_entidad"], 
+                                                              $_POST["in_clasificacion_ent"],
+                                                              $_POST["descripcion"],
+                                                              $_POST["dni_enterprise"],
+                                                              $_POST["nu_tipo_entidad_doc_ent"],
+                                                              $_POST["in_clasificacion_tipo_ent_doc_ent"],
+                                                              $_POST["nu_tipo_entidad_pry"],
+                                                              $_POST["in_clasificacion_tipo_ent_pry"]
+                                                              );
+
+
+                        echo json_encode($resultado);
+
+                    }else{
+                        // Toquen invalido, no esta autorizado
+                        http_response_code(401);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }                    
+            }
+    
         break;
 
-        // pendiente si el metodo es delete pero no manda json, y verificar que los datos son validos, no null
-        // Actualizar un Usuario
-        // se recibe un Json con los datos
         case 'PUT':
-            //echo 'informacion: '. file_get_contents('php://input')."\n";
-            $_PUT = json_decode( file_get_contents('php://input'),true);
-            $resultado["mensaje"] = "Actualiza Datos del Usuario con el id: ".$_GET['id']. 
-                                    ", Informacion".json_encode($_PUT);
-            echo json_encode($resultado);
 
-            //echo "Actualiza Datos del Usuario: id: ".$_GET['id'];
+/****************************************************** consulta -> Insertar *****************************************************/  
+
+            if(isset($_GET["consulta"]) && ($_GET["consulta"] =='Actualizar')){
+                $entidad = new Entidad();
+                
+                if ($entidad->consultarToken($_GET["tkn"])){
+                    $consulta = $entidad->actualizarEntidad($_GET["descripcion"], 
+                                                            $_GET["nu_tipo_entidad"],
+                                                            $_GET["in_clasificacion_tipo_ent"],
+                                                            $_GET["nu_entidad"],
+                                                            $_GET["in_clasificacion_ent"],
+                                                            $_GET["nu_tipo_entidad_pry"],
+                                                            $_GET["in_clasificacion_tipo_ent_pry"],
+                                                            $_GET["dni_enterprise"],
+                                                            $_GET["nu_tipo_entidad_doc_ent"],
+                                                            $_GET["in_clasificacion_tipo_ent_doc_ent"]
+                                                            );
+
+                        if ($consulta){
+                            http_response_code(200);
+                            $resultado["codigoResultado"] = "1";
+                            $resultado["mensaje"] = "Actualizacion Correcta";
+                        }else{
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Error en la inserción";
+                        }
+                        
+                        echo json_encode($resultado);
+
+                    }else{
+                        // Toquen invalido, no esta autorizado
+                        http_response_code(401);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Acceso Denegado";
+                        echo json_encode($resultado);
+                    }                    
+
+            }
+
+
         break;
 
-
-        // pendiente si el metodo es delete pero no manda id
-        // Eliminar un Usuario
-        // se envia un id del usuario a consultar
         case 'DELETE':
-            $resultado["mensaje"] = "Eliminar el Usuario con el id: ".$_GET['id'];
-            echo json_encode($resultado);
 
-            //echo "Borrar Datos del Usuario: id: ".$_GET['id'];
+/****************************************************** consulta -> Eliminar *****************************************************/  
+            
+            if(isset($_GET["consulta"]) && ($_GET["consulta"] =='Eliminar')){
+                
+                echo("en el eliminar");
+                
+                $entidad = new Entidad();
+                
+                echo("creamos entidad");
+                
+                $consulta = $entidad->borrarEntidad($_GET["nu_tipo_entidad"], 
+                                                    $_GET["in_clasificacion_tipo_ent"], 
+                                                    $_GET["nu_entidad"], 
+                                                    $_GET["in_clasificacion_ent"],
+                                                    $_GET["dni_enterprise"], 
+                                                    $_GET["nu_tipo_entidad_doc_ent"],
+                                                    $_GET["in_clasificacion_tipo_ent_doc_ent"]);
+
+            if ($consulta){
+                http_response_code(200);
+                $resultado["codigoResultado"] = "1";
+                $resultado["mensaje"] = "Eliminacion Correcta";
+            }else{
+                http_response_code(404);
+                $resultado["codigoResultado"] = "0";
+                $resultado["mensaje"] = "Error en la Eliminacion";
+            }
+            
+            echo json_encode($resultado);                                                        
+              
+              }
+                      
         break;
         default:
             echo "Error Metodo Request No aceptado";
     }
     
-
-    
-
-    
-
-  
-
-    
-
 ?>

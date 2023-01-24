@@ -6,6 +6,12 @@
         private $correo;
         private $password;
         private $token;
+        public $nu_tipo_entidad_prf;
+        public $in_clasificacion_tipo_ent_prf;
+        public $dni_enterprise;
+        public $nu_tipo_entidad_doc_ent;
+        public $in_clasificacion_tipo_ent_doc_ent;
+
 
         //-------------------------------------------
 
@@ -139,7 +145,6 @@
             return $this->token;
         }
 
-
         public function ID_usuario($ID){
             $this->ID_usuario = $ID;
         }
@@ -156,7 +161,7 @@
             $this->password = $password;
         }
 
-        public function consultarUsuario()
+        public function consultarUsuario() // <-- inicio de sesion
         {       
             // abrimos la coneccion para hacer la consulta a la bd
             $this->abrirConexion();
@@ -164,9 +169,9 @@
             // https://www.tutorialspoint.com/php/php_function_mysqli_fetch_all.htm
             $rows = $this->buscar("usuario","emailuser = '".$this->correo."' and ".
                                     "password = '".$this->password."'");
-            /*
-            print_r($rows);
-
+            
+            //print_r($rows);
+/*
             print_r($rows[0]["ID_Usurio"]);
             print_r($rows[0]["username"]);
             */
@@ -179,6 +184,14 @@
                 $this->ID_usuario=intval($rows[0]["ID_Usuario"]);
                 $this->nombre=$rows[0]["username"];
                 $this->token=$this->crearToken();
+                $this->nu_tipo_entidad_prf = $rows[0]["nu_tipo_entidad_prf"];
+                $this->in_clasificacion_tipo_ent_prf = $rows[0]["in_clasificacion_tipo_ent_prf"];
+                
+                $this->dni_enterprise = $rows[0]["dni_enterprise"];
+                $this->nu_tipo_entidad_doc_ent = $rows[0]["nu_tipo_entidad_doc_ent"];
+                $this->in_clasificacion_tipo_ent_doc_ent= $rows[0]["in_clasificacion_tipo_ent_doc_ent"];
+
+
                 $this->borrarToken();
                 $this->guardarToken();
 

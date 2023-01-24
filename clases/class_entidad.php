@@ -80,7 +80,12 @@
 
             $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad WHERE 
                          in_clasificacion_ent in ('CNT','ALM','LOC') and
-                         nu_tipo_entidad > 0";
+                         nu_tipo_entidad > 0 AND 
+                         dni_enterprise='$this->dni_enterprise' AND
+                         nu_tipo_entidad_doc_ent= $this->nu_tipo_entidad_doc_ent AND
+                         in_clasificacion_tipo_ent_doc_ent = '$this->in_clasificacion_tipo_ent_doc_ent' AND
+                         nu_tipo_entidad_sta=1 AND 
+                         in_clasificacion_tipo_ent_sta='ACT'";
 
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
@@ -91,14 +96,25 @@
             return $resultado;
         }
         
-        public function consultarEntidad($descripcion)
+        public function consultarEntidad($descripcion, 
+                                         $dni_enterprise, 
+                                         $nu_tipo_entidad_doc_ent,
+                                         $in_clasificacion_tipo_ent_doc_ent)
         {       
             $this->abrirConexion();
 
-            $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad WHERE 
-                         in_clasificacion_ent in ('CNT','ALM','LOC') and
-                         nu_tipo_entidad > 0 and descripcion like '%$descripcion%' ";
-
+            $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad 
+                    WHERE in_clasificacion_ent in ('CNT','ALM','LOC') AND
+                         nu_tipo_entidad > 0 AND  
+                         dni_enterprise='$dni_enterprise' AND
+                         nu_tipo_entidad_doc_ent= $nu_tipo_entidad_doc_ent AND
+                         in_clasificacion_tipo_ent_doc_ent = '$in_clasificacion_tipo_ent_doc_ent' AND
+                         descripcion like '%$descripcion%' AND
+                         nu_tipo_entidad_sta=1 AND 
+                         in_clasificacion_tipo_ent_sta='ACT' ";
+            
+            //echo ($sql);
+    
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
             $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
@@ -123,15 +139,31 @@
             return $resultado;
         }
         
-        public function incertarEntidad($nu_entidad, $in_clasificacion_ent, $descripcion)
+        public function insertarEntidad($nu_entidad, 
+                                        $in_clasificacion_ent, 
+                                        $descripcion,
+                                        $dni_enterprise,
+                                        $nu_tipo_entidad_doc_ent,
+                                        $in_clasificacion_tipo_ent_doc_ent,
+                                        $nu_tipo_entidad_pry,
+                                        $in_clasificacion_tipo_ent_pry
+                                        )
         {       
+            
+            //echo ("nu_entidad: $nu_entidad, in_clasificacion_ent: $in_clasificacion_ent, descripcion: $descripcion");
+            
             $this->abrirConexion();
 
             //$resultado = $this->conexion->query("UPDATE $tabla SET $campos where $condicion") or die($this->conexion->error);
             // calcular el valor de nu_tipo_entidad
             $nu_tipo_entidad=0;
             
-            $sql = "SELECT max(nu_tipo_entidad) AS valorMax FROM `tipo_entidad` WHERE `in_clasificacion_ent`='$in_clasificacion_ent'";
+            $sql = "SELECT max(nu_tipo_entidad) AS valorMax FROM `tipo_entidad` WHERE nu_entidad = '$nu_entidad' AND
+                                                                                     `in_clasificacion_ent` = '$in_clasificacion_ent' AND
+                                                                                      dni_enterprise = '$dni_enterprise' AND 
+                                                                                      nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND 
+                                                                                      in_clasificacion_tipo_ent_doc_ent = '$in_clasificacion_tipo_ent_doc_ent'
+            ";
             
             //print_r($sql);
             
@@ -141,18 +173,152 @@
 
             $nu_tipo_entidad= intval($resultado[0]['valorMax'])+1;
 
-            
-
-            $sql="INSERT INTO tipo_entidad VALUES ($nu_tipo_entidad,'$in_clasificacion_ent' , '$nu_entidad', '$in_clasificacion_ent', '$descripcion', 'J-403961441', '7','RIF')";
+            $sql="INSERT INTO tipo_entidad VALUES ($nu_tipo_entidad,
+                                                  '$in_clasificacion_ent',
+                                                   $nu_entidad, 
+                                                  '$in_clasificacion_ent',
+                                                  '$descripcion', 
+                                                  '$dni_enterprise', 
+                                                   $nu_tipo_entidad_doc_ent,
+                                                  '$in_clasificacion_tipo_ent_doc_ent',
+                                                  1,
+                                                  'ACT',
+                                                  $nu_tipo_entidad_pry,
+                                                  '$in_clasificacion_tipo_ent_pry'
+                                                  )";
             //print_r ($sql);
+            $resultado = $this->conexion->query($sql); //or die($this->conexion->error);
+
+
+            if($this->conexion->affected_rows > 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            
+            $this->cerrarConexion();
+        }
+
+        public function actualizarEntidad($descripcion,
+                                          $nu_tipo_entidad, 
+                                          $in_clasificacion_tipo_ent, 
+                                          $nu_entidad, 
+                                          $in_clasificacion_ent,
+                                          $nu_tipo_entidad_pry,
+                                          $in_clasificacion_tipo_ent_pry,
+                                          $dni_enterprise, 
+                                          $nu_tipo_entidad_doc_ent,
+                                          $in_clasificacion_tipo_ent_doc_ent
+                                          )
+        {       
+
+            $this->abrirConexion();
+
+            $sql="UPDATE tipo_entidad SET descripcion = '$descripcion',
+	   					nu_tipo_entidad_pry = $nu_tipo_entidad_pry,
+                        in_clasificacion_tipo_ent_pry = '$in_clasificacion_tipo_ent_pry'
+				  WHERE nu_tipo_entidad = $nu_tipo_entidad AND
+                    	in_clasificacion_tipo_ent = '$in_clasificacion_tipo_ent' AND
+                    	nu_entidad = $nu_entidad AND 
+                    	in_clasificacion_ent = '$in_clasificacion_ent' AND 
+                    	dni_enterprise = '$dni_enterprise' AND
+                    	nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND 
+                    	in_clasificacion_tipo_ent_doc_ent = '$in_clasificacion_tipo_ent_doc_ent'";
+            
+            //print_r($sql);
+            
+            $this->conexion->query($sql); //or die($this->conexion->error);
+
+
+            if($this->conexion->affected_rows > 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            
+            $this->cerrarConexion();
+        }
+        
+        function consultarProyecto($dni_enterprise,$nu_tipo_entidad_doc_ent,$in_clasificacion_tipo_ent_doc_ent){
+
+        $this->abrirConexion();
+        $sql = "select nu_tipo_entidad as nu_tipo_entidad_pry, in_clasificacion_tipo_ent as in_clasificacion_tipo_ent_pry, descripcion 
+                from tipo_entidad 
+                where nu_entidad = 14 AND
+                in_clasificacion_ent='PRY' AND 
+                dni_enterprise='$dni_enterprise' AND 
+                nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND 
+                in_clasificacion_tipo_ent_doc_ent= '$in_clasificacion_tipo_ent_doc_ent' order by nu_tipo_entidad";
+
+        $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+        $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+    
+        // toda coneccion debe cerrarce una vez finalizada la consulta
+        $this->cerrarConexion();
+        return $resultado;
+        }
+        
+        function borrarEntidad($nu_tipo_entidad, 
+                               $in_clasificacion_tipo_ent, 
+                               $nu_entidad, 
+                               $in_clasificacion_ent,
+                               
+                               $dni_enterprise, 
+                               $nu_tipo_entidad_doc_ent,
+                               $in_clasificacion_tipo_ent_doc_ent){
+
+        $this->abrirConexion();
+        $sql = "UPDATE tipo_entidad SET nu_tipo_entidad_sta=2,in_clasificacion_tipo_ent_sta='INC'
+                    WHERE nu_tipo_entidad=$nu_tipo_entidad AND
+                    in_clasificacion_tipo_ent='$in_clasificacion_tipo_ent' AND
+                    nu_entidad=$nu_entidad AND
+                    in_clasificacion_ent='$in_clasificacion_ent' AND
+                    dni_enterprise='$dni_enterprise' AND
+                    nu_tipo_entidad_doc_ent=$nu_tipo_entidad_doc_ent AND
+                    in_clasificacion_tipo_ent_doc_ent='$in_clasificacion_tipo_ent_doc_ent'";
+
+        //print_r($sql);
+        
+           $this->conexion->query($sql); //or die($this->conexion->error);
+
+            if($this->conexion->affected_rows > 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            
+            $this->cerrarConexion();
+
+        }
+        
+        function filtrar_entidades_por_proyecto($nu_tipo_entidad_pry,
+                                                $in_clasificacion_tipo_ent_pry,
+                                                $dni_enterprise, 
+                                                $nu_tipo_entidad_doc_ent,
+                                                $in_clasificacion_tipo_ent_doc_ent
+                                                ){
+                                                    
+            $this->abrirConexion();
+            
+            $sql="SELECT nu_tipo_entidad,in_clasificacion_tipo_ent,nu_entidad,in_clasificacion_ent, `dni_enterprise` from tipo_entidad 
+                        WHERE 
+                            nu_tipo_entidad_pry=$nu_tipo_entidad_pry AND
+                            in_clasificacion_tipo_ent_pry='$in_clasificacion_tipo_ent_pry' AND
+                            dni_enterprise='$dni_enterprise' AND
+                            nu_tipo_entidad_doc_ent=$nu_tipo_entidad_doc_ent AND
+                            in_clasificacion_tipo_ent_doc_ent='$in_clasificacion_tipo_ent_doc_ent' AND 
+                            nu_tipo_entidad > 0 AND
+                            nu_tipo_entidad_sta=1 AND 
+                            in_clasificacion_tipo_ent_sta='ACT'
+                        ORDER BY nu_entidad,nu_tipo_entidad";
+
+        //echo($sql);
+    
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
             $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
 
             // toda coneccion debe cerrarce una vez finalizada la consulta
-            
-            
-            
             $this->cerrarConexion();
             return $resultado;
 

@@ -45,7 +45,14 @@
                             "mensaje" => "Usuario autenticado",
                             "usuario" => array(
                                 "nombre" => $usuario->get_Nombre(),
-                                "correo" => $usuario->get_Correo()
+                                "correo" => $usuario->get_Correo(),
+                                "nu_tipo_entidad_prf" => $usuario-> nu_tipo_entidad_prf,
+                                "in_clasificacion_tipo_ent_prf" => $usuario-> in_clasificacion_tipo_ent_prf,
+                                
+                                "dni_enterprise" => $usuario-> dni_enterprise,
+                                "nu_tipo_entidad_doc_ent" => $usuario->nu_tipo_entidad_doc_ent,
+                                "in_clasificacion_tipo_ent_doc_ent" => $usuario-> in_clasificacion_tipo_ent_doc_ent
+
                                 )
                             );                                
                         /**$resultado["token"] = sha1(uniqid(rand(),true));
