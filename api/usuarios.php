@@ -9,90 +9,73 @@
    
    include_once("../clases/class_usuario.php");
    // Recibir las peticiones del usuario
-
-   function str_rand(int $length = 64){ // 64 = 32
-    $length = ($length < 4) ? 4 : $length;
-    return bin2hex(random_bytes(($length-($length%2))/2));  
-    }
-
    switch ($_SERVER['REQUEST_METHOD']){
 
-        
+        // se recibe un correo y password del usuario a consultar
         case 'GET':
 
         break;
         
         // pendiente que se envie el json con los datos validos, no null
-        // Incertar Usuario (Crear Uruario)
+        // Crear Uruario
         // se recibe un Json con los datos
         case 'POST':
             //echo 'informacion: '. file_get_contents('php://input')."\n";
-            $_POST = json_decode( file_get_contents('php://input'),true);
-            //echo "Nuevo Correo: " . $_POST['correo'];
-            
+            ///$_POST = json_decode( file_get_contents('php://input'),true);
+            //echo "Nuevo Usuario: " . $_POST['nombre'];
             ///$resultado["mensaje"] = "Guardar usuario, informacion:"///.json_encode($_POST);
             ///echo json_encode($resultado);
             
-            if (isset($_POST["token"])){
+            if(isset($_POST["correo"])){
+                // Recibimos un Correo
+                if (isset($_POST["password"])){
 
-                //print_r("confirmando token");
-                //print_r("token:" . $_POST["token"]);
-                $usuario = new Usuario();
-                if ($usuario->consultarToken($_POST["token"])){
-                    print_r("el token es valido ");
-                    print_r("pertenece a :".$usuario->get_Nombre());
-                }else{
-                    print("token invalido, denegado");
-                }
-                
-            }else{
-                // se recibe un correo y password del usuario a consultar  
-                if(isset($_POST["correo"])){
-                    // Recibimos un Correo
+                    //print_r("correo:".$_POST["correo"]." clave: ".$_POST["password"]);
                     
-                    if (isset($_POST["password"])){
+                    $usuario = new Usuario();
+                    $usuario->set_Correo($_POST["correo"]);
+                    $usuario->set_Password($_POST["password"]);
 
-                        $usuario = new Usuario();
-                        $usuario->set_Correo($_POST["correo"]);
-                        $usuario->set_Password($_POST["password"]);
+                    if ($usuario->consultarUsuario()){
+                        http_response_code(200);
 
-                        if ($usuario->consultarUsuario()){
-                            http_response_code(200);
-
-                            $resultado=array(
-                                "token"=>$usuario->get_Token(),
-                                "codigoResultado"=>"1",
-                                "mensaje" => "Usuario autenticado",
-                                "usuario" => array(
-                                    "nombre" => $usuario->get_Nombre(),
-                                    "correo" => $usuario->get_Correo()
+                        $resultado=array(
+                            "token"=>$usuario->get_Token(),
+                            "codigoResultado"=>"1",
+                            "mensaje" => "Usuario autenticado",
+                            "usuario" => array(
+                                "nombre" => $usuario->get_Nombre(),
+                                "correo" => $usuario->get_Correo()
                                 )
-                            );
-                            
-                            echo json_encode($resultado);
-                        }else{
-                            http_response_code(404);
-                            $resultado["codigoResultado"] = "0";
-                            $resultado["mensaje"] = "Usuario/Password incorrectos";
-                            echo json_encode($resultado);
-                        }
-
-                        }else{
-                        http_response_code(400);
-                        // incorrecto tiene usuario falta clave
-                        $resultado["mensaje"] = "Error, Indique password del usuario";
+                            );                                
+                        /**$resultado["token"] = sha1(uniqid(rand(),true));
+                        $resultado["codigoResultado"] = "1";
+                        $resultado["mensaje"] = "Usuario autenticado";
+                        
+                        $usuarioDatos["nombre"]= "pepe";
+                        $usuarioDatos["correo"]= "pepe@hotmail.com";
+                        
+                        $resultado["usuario"]= $usuarioDatos;
+                        **/
+                        echo json_encode($resultado);
+                    }else{
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Usuario/Password incorrectos";
                         echo json_encode($resultado);
                     }
-                        
-                }else{
-                    http_response_code(400);
-                    // no se ha recibido ningun correo
-                    $resultado["mensaje"] = "Error Indique el correo a consultar";
+
+                    }else{
+                    // incorrecto tiene usuario falta clave
+                    $resultado["mensaje"] = "Error, Indique password del usuario";
                     echo json_encode($resultado);
                 }
-            }
+                    
+            }else{
+                // no se ha recibido ningun correo
+                $resultado["mensaje"] = "Error Indique el correo a consultar";
+                echo json_encode($resultado);
 
-            /****/
+            }
         break;
 
         // pendiente si el metodo es delete pero no manda json, y verificar que los datos son validos, no null
@@ -122,13 +105,4 @@
             echo "Error Metodo Request No aceptado";
     }
     
-
-    
-
-    
-
-  
-
-    
-
 ?>
