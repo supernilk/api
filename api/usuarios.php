@@ -11,27 +11,140 @@
    // Recibir las peticiones del usuario
    switch ($_SERVER['REQUEST_METHOD']){
 
-        // se recibe un correo y password del usuario a consultar
         case 'GET':
+            if(isset($_GET["tkn"])){
+                //if(isset($_GET["consulta"]) && ($_GET["consulta"] =='Usuarios')){
 
+                if (isset($_GET["buscar"])){
+                    if (isset($_GET["dni_enterprise"]) &&
+                        isset($_GET["nu_tipo_entidad_doc_ent"]) &&
+                        isset($_GET["in_clasificacion_tipo_ent_doc_ent"])){
+                        
+                        $usuario = new Usuario();
+                        if ($usuario->consultarToken($_GET["tkn"])){
+                            http_response_code(200);
+                            $raws = $usuario->consulta_Usuario($_GET["dni_enterprise"],
+                                                               $_GET["nu_tipo_entidad_doc_ent"],
+                                                               $_GET["in_clasificacion_tipo_ent_doc_ent"], 
+                                                               $_GET["buscar"]);
+
+                            echo (json_encode($raws));
+                        }else{
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                            echo json_encode($resultado);
+                        }
+                    }else{
+                            // Faltan los datos de empresa
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Faltan Datos de la empresa  (dni_enterprise,nu_tipo_entidad_doc_ent,in_clasificacion_tipo_ent_doc_ent)";
+                            echo json_encode($resultado);
+                    }
+                    
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='roles')){
+
+                        $usuario = new Usuario();
+                        if ($usuario->consultarToken($_GET["tkn"])){
+                            http_response_code(200);
+                            $raws = $usuario->consultar_roles();
+
+                            echo (json_encode($raws));
+                        }else{
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                            echo json_encode($resultado);
+                        }
+
+                }else{
+                    
+                    if (isset($_GET["dni_enterprise"]) &&
+                        isset($_GET["nu_tipo_entidad_doc_ent"]) &&
+                        isset($_GET["in_clasificacion_tipo_ent_doc_ent"])){
+                        
+                        $usuario = new Usuario();
+                        if ($usuario->consultarToken($_GET["tkn"])){
+                            http_response_code(200);
+                            $raws = $usuario->consultar_todos_Usuarios($_GET["dni_enterprise"],
+                                                                       $_GET["nu_tipo_entidad_doc_ent"],
+                                                                       $_GET["in_clasificacion_tipo_ent_doc_ent"]);
+
+                            echo (json_encode($raws));
+                        
+                        }else{
+                        
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                            echo json_encode($resultado);
+                        }
+                        
+                    }else{
+                            // Faltan los datos de empresa
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Faltan Datos de la empresa  (dni_enterprise,nu_tipo_entidad_doc_ent,in_clasificacion_tipo_ent_doc_ent)";
+                            echo json_encode($resultado);
+                    }
+                }
+
+            }
+            
+            
         break;
         
-        // pendiente que se envie el json con los datos validos, no null
-        // Crear Uruario
-        // se recibe un Json con los datos
+
         case 'POST':
-            //echo 'informacion: '. file_get_contents('php://input')."\n";
-            ///$_POST = json_decode( file_get_contents('php://input'),true);
-            //echo "Nuevo Usuario: " . $_POST['nombre'];
-            ///$resultado["mensaje"] = "Guardar usuario, informacion:"///.json_encode($_POST);
-            ///echo json_encode($resultado);
-            
-            if(isset($_POST["correo"])){
+/**************************************************************************************/
+            if (isset($_GET["consulta"]) && ($_GET["consulta"]=="insertar")){
+
+                    if (isset($_GET["dni_enterprise"]) &&
+                        isset($_GET["nu_tipo_entidad_doc_ent"]) &&
+                        isset($_GET["in_clasificacion_tipo_ent_doc_ent"])){
+
+                        $usuario = new Usuario();
+                        if ($usuario->consultarToken($_GET["tkn"])){
+                            http_response_code(200);
+                            $raws = $usuario->insertar_usuario_con_licencia($_GET["nombre"],
+                                                                            $_GET["apellido"],
+                                                                            $_GET["email"],
+                                                                            $_GET["username"],
+                                                                            $_GET["password"],
+                                                                            $_GET["emailuser"],
+                                                      
+                                                                            $_GET["dni_enterprise"],
+                                                                            $_GET["nu_tipo_entidad_doc_ent"],
+                                                                            $_GET["in_clasificacion_tipo_ent_doc_ent"]
+                                                                            );
+
+                            echo (json_encode($raws));
+                        }else{
+                            // Toquen invalido
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                            echo json_encode($resultado);
+                        }
+                        
+                            
+                    }else{
+                            // Faltan los datos de empresa
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Faltan Datos de la empresa  (dni_enterprise,nu_tipo_entidad_doc_ent,in_clasificacion_tipo_ent_doc_ent)";
+                            echo json_encode($resultado);
+                    }
+/**************************************************************************************/
+            // Logueo 
+            }elseif(isset($_POST["correo"])){
                 // Recibimos un Correo
                 if (isset($_POST["password"])){
 
-                    //print_r("correo:".$_POST["correo"]." clave: ".$_POST["password"]);
-                    
                     $usuario = new Usuario();
                     $usuario->set_Correo($_POST["correo"]);
                     $usuario->set_Password($_POST["password"]);
@@ -55,16 +168,9 @@
 
                                 )
                             );                                
-                        /**$resultado["token"] = sha1(uniqid(rand(),true));
-                        $resultado["codigoResultado"] = "1";
-                        $resultado["mensaje"] = "Usuario autenticado";
-                        
-                        $usuarioDatos["nombre"]= "pepe";
-                        $usuarioDatos["correo"]= "pepe@hotmail.com";
-                        
-                        $resultado["usuario"]= $usuarioDatos;
-                        **/
+
                         echo json_encode($resultado);
+
                     }else{
                         $resultado["codigoResultado"] = "0";
                         $resultado["mensaje"] = "Usuario/Password incorrectos";
@@ -85,9 +191,7 @@
             }
         break;
 
-        // pendiente si el metodo es delete pero no manda json, y verificar que los datos son validos, no null
-        // Actualizar un Usuario
-        // se recibe un Json con los datos
+
         case 'PUT':
             //echo 'informacion: '. file_get_contents('php://input')."\n";
             $_PUT = json_decode( file_get_contents('php://input'),true);

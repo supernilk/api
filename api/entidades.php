@@ -155,30 +155,31 @@
 /****************************************************** consulta -> Insertar *****************************************************/  
 
             if(isset($_POST["consulta"]) && ($_POST["consulta"] =='Insertar')){
+                    
+                if ($entidad->consultarToken($_POST["tkn"])){
+
                     $entidad = new Entidad();
-
-                    if ($entidad->consultarToken($_POST["tkn"])){
-
-                        $consulta = $entidad->insertarEntidad($_POST["nu_entidad"], 
-                                                              $_POST["in_clasificacion_ent"],
-                                                              $_POST["descripcion"],
-                                                              $_POST["dni_enterprise"],
-                                                              $_POST["nu_tipo_entidad_doc_ent"],
-                                                              $_POST["in_clasificacion_tipo_ent_doc_ent"],
-                                                              $_POST["nu_tipo_entidad_pry"],
-                                                              $_POST["in_clasificacion_tipo_ent_pry"]
-                                                              );
+                    
+                    $consulta = $entidad->insertarEntidad($_POST["nu_entidad"], 
+                                                          $_POST["in_clasificacion_ent"],
+                                                          $_POST["descripcion"],
+                                                          $_POST["dni_enterprise"],
+                                                          $_POST["nu_tipo_entidad_doc_ent"],
+                                                          $_POST["in_clasificacion_tipo_ent_doc_ent"],
+                                                          $_POST["nu_tipo_entidad_pry"],
+                                                          $_POST["in_clasificacion_tipo_ent_pry"]
+                                                          );
 
 
-                        echo json_encode($resultado);
+                    echo json_encode($resultado);
 
-                    }else{
-                        // Toquen invalido, no esta autorizado
-                        http_response_code(401);
-                        $resultado["codigoResultado"] = "0";
-                        $resultado["mensaje"] = "Acceso Denegado";
-                        echo json_encode($resultado);
-                    }                    
+                }else{
+                    // Toquen invalido, no esta autorizado
+                    http_response_code(401);
+                    $resultado["codigoResultado"] = "0";
+                    $resultado["mensaje"] = "Acceso Denegado";
+                    echo json_encode($resultado);
+                }                    
             }
     
         break;
@@ -210,7 +211,7 @@
                         }else{
                             http_response_code(404);
                             $resultado["codigoResultado"] = "0";
-                            $resultado["mensaje"] = "Error en la inserción";
+                            $resultado["mensaje"] = "Error en la Actualizacion";
                         }
                         
                         echo json_encode($resultado);
@@ -232,35 +233,43 @@
 
 /****************************************************** consulta -> Eliminar *****************************************************/  
             
+            
+            
             if(isset($_GET["consulta"]) && ($_GET["consulta"] =='Eliminar')){
-                
-                echo("en el eliminar");
-                
+            
                 $entidad = new Entidad();
                 
-                echo("creamos entidad");
+                if ($entidad->consultarToken($_GET["tkn"])){
+                    
+                    $consulta = $entidad->borrarEntidad($_GET["nu_tipo_entidad"], 
+                                                        $_GET["in_clasificacion_tipo_ent"], 
+                                                        $_GET["nu_entidad"], 
+                                                        $_GET["in_clasificacion_ent"],
+                                                        $_GET["dni_enterprise"], 
+                                                        $_GET["nu_tipo_entidad_doc_ent"],
+                                                        $_GET["in_clasificacion_tipo_ent_doc_ent"]);
+    
+                    if ($consulta){
+                        http_response_code(200);
+                        $resultado["codigoResultado"] = "1";
+                        $resultado["mensaje"] = "Eliminacion Correcta";
+                    }else{
+                        http_response_code(404);
+                        $resultado["codigoResultado"] = "0";
+                        $resultado["mensaje"] = "Error en la Eliminacion";
+                    }
+                    
+                }else{
+                    // Toquen invalido, no esta autorizado
+                    http_response_code(401);
+                    $resultado["codigoResultado"] = "0";
+                    $resultado["mensaje"] = "Acceso Denegado";
+                    echo json_encode($resultado);
+                }
                 
-                $consulta = $entidad->borrarEntidad($_GET["nu_tipo_entidad"], 
-                                                    $_GET["in_clasificacion_tipo_ent"], 
-                                                    $_GET["nu_entidad"], 
-                                                    $_GET["in_clasificacion_ent"],
-                                                    $_GET["dni_enterprise"], 
-                                                    $_GET["nu_tipo_entidad_doc_ent"],
-                                                    $_GET["in_clasificacion_tipo_ent_doc_ent"]);
-
-            if ($consulta){
-                http_response_code(200);
-                $resultado["codigoResultado"] = "1";
-                $resultado["mensaje"] = "Eliminacion Correcta";
-            }else{
-                http_response_code(404);
-                $resultado["codigoResultado"] = "0";
-                $resultado["mensaje"] = "Error en la Eliminacion";
-            }
-            
             echo json_encode($resultado);                                                        
               
-              }
+            }
                       
         break;
         default:

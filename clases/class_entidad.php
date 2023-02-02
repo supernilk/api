@@ -9,6 +9,7 @@
         private $DB_CONTRA     = "admin*sisregin";
         private $DB_NOMBRE     = "ventaso2_sisregin";
         
+        
         //private $DB_HOST       = "localhost";
         //private $DB_USUARIO    = "root";
         //private $DB_CONTRA     = "";

@@ -6,6 +6,7 @@
         private $correo;
         private $password;
         private $token;
+        
         public $nu_tipo_entidad_prf;
         public $in_clasificacion_tipo_ent_prf;
         public $dni_enterprise;
@@ -99,19 +100,25 @@
             $this->abrirConexion();
 
             $sql="SELECT * FROM token t JOIN usuario u ON t.ID_Usuario=u.ID_Usuario WHERE t.token ='$token_a_comparar'";
+            
             //print_r($sql);
+            
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
-            $resultado = count($resultado->fetch_all(MYSQLI_ASSOC));
-            //print_r($resultado[0]["username"]);
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
 
-            if ($resultado>0){
+            //print_r("nombre = ".$resultado[0]["username"]);
+
+            //$result = count($resultado);
+            
+
+            if (count($resultado) >0){
                 $this->ID_usuario=intval($resultado[0]["ID_Usuario"]);
                 $this->nombre=$resultado[0]["username"];
+                $this->nu_tipo_entidad_prf = $resultado[0]["nu_tipo_entidad_prf"];
+                $this->in_clasificacion_tipo_ent_prf = $resultado[0]["in_clasificacion_tipo_ent_prf"];
             }
-            //print_r($resultado);
-            //print_r(count($resultado));
-            
+
             $this->cerrarConexion();
             return $resultado > 0 ? true : false;
         }
@@ -207,13 +214,214 @@
             # code...
             # sql: SELECT * FROM token t JOIN usuario u ON t.ID_Usuario=u.ID_Usurio WHERE	t.token ="73b82ece748866749d66411d908585ae4192b967"
         }
+
+/*******************************************************************************************************************************************/
+        // Buscamos todos los usuarios segun la empresa.
+        public function consultar_todos_Usuarios($dni_enterprise, $nu_tipo_entidad_doc_ent,$in_clasificacion_tipo_ent_doc_ent){
+            
+            $this->abrirConexion();
+            
+            $sql="select CONCAT(Nombre, ' ', Apellido) As Nombre,u.emailuser as email,u.username,t.descripcion perfil   
+                    from usuario u, persona p,tipo_entidad t
+                    where u.dni = p.dni AND 
+                    u.nu_tipo_entidad_doc = p.nu_tipo_entidad_doc AND
+                    u.in_clasificacion_tipo_ent_doc = p.in_clasificacion_tipo_ent_doc AND
+                    u.emailuser = p.email AND
+                    u.nu_tipo_entidad_prf = t.nu_tipo_entidad AND
+                    u.in_clasificacion_tipo_ent_prf = t.in_clasificacion_tipo_ent AND
+                    u.dni_enterprise = '$dni_enterprise' AND
+                    u.nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND
+                    u.in_clasificacion_tipo_ent_doc_ent = '$in_clasificacion_tipo_ent_doc_ent'";
+
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+            
+        }
+        
+/*******************************************************************************************************************************************/
+        // Buscamos todos los usuarios segun parametros de busqueda (buscar) y los datos de la empresa.
+        public function consulta_Usuario($dni_enterprise, $nu_tipo_entidad_doc_ent,$in_clasificacion_tipo_ent_doc_ent, $buscar){
+            
+            $this->abrirConexion();
+            
+            $sql="select CONCAT(Nombre, ' ', Apellido) As Nombre,u.emailuser as email,u.username,t.descripcion perfil   
+                    from usuario u, persona p,tipo_entidad t
+                    where u.dni = p.dni AND 
+                    u.nu_tipo_entidad_doc = p.nu_tipo_entidad_doc AND
+                    u.in_clasificacion_tipo_ent_doc = p.in_clasificacion_tipo_ent_doc AND
+                    u.emailuser = p.email AND
+                    u.nu_tipo_entidad_prf = t.nu_tipo_entidad AND
+                    u.in_clasificacion_tipo_ent_prf = t.in_clasificacion_tipo_ent AND
+                    u.dni_enterprise = '$dni_enterprise' AND
+                    u.nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND
+                    u.in_clasificacion_tipo_ent_doc_ent = '$in_clasificacion_tipo_ent_doc_ent' AND
+                    CONCAT(Nombre, ' ', Apellido) like '%$buscar%'";
+
+
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+            
+        }
+
+/*******************************************************************************************************************************************/
+        public function consultarEntidades()
+        {       
+
+            $sql="SELECT nu_entidad, in_clasificacion_ent, nu_tipo_entidad, in_clasificacion_tipo_ent, descripcion FROM tipo_entidad WHERE 
+                         in_clasificacion_ent in ('CNT','ALM','LOC') and
+                         nu_tipo_entidad > 0 AND 
+                         dni_enterprise='$this->dni_enterprise' AND
+                         nu_tipo_entidad_doc_ent= $this->nu_tipo_entidad_doc_ent AND
+                         in_clasificacion_tipo_ent_doc_ent = '$this->in_clasificacion_tipo_ent_doc_ent' AND
+                         nu_tipo_entidad_sta=1 AND 
+                         in_clasificacion_tipo_ent_sta='ACT'";
+
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+        }  
+/*******************************************************************************************************************************************/
+        public function consultar_roles()
+        {       
+            //echo ("nu_tipo_entidad_prf: /".$this->nu_tipo_entidad_prf."/ " );
+            //echo ("in_clasificacion_tipo_ent_prf: /".$this->in_clasificacion_tipo_ent_prf."/" );
+            
+            $this->abrirConexion();
+            if ($this->nu_tipo_entidad_prf <=2){
+                //"Tienes permisos"
+                $sql="SELECT nu_tipo_entidad AS nu_tipo_entidad_prf,
+                             in_clasificacion_tipo_ent as in_clasificacion_tipo_ent_prf,
+                             descripcion  
+                            FROM tipo_entidad 
+                            WHERE in_clasificacion_ent='PRF'";
+            }else{
+                //"eres lvl 3 no tiens permisos"
+                $sql="SELECT nu_tipo_entidad AS nu_tipo_entidad_prf, 
+                             in_clasificacion_tipo_ent as in_clasificacion_tipo_ent_prf,
+                             descripcion  
+                            FROM tipo_entidad 
+                            WHERE in_clasificacion_ent='PRF' AND
+                             `nu_tipo_entidad`=3 AND
+                             `in_clasificacion_tipo_ent`='ANI'";
+            }
+            
+            $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+
+            $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+
+            // toda coneccion debe cerrarce una vez finalizada la consulta
+            $this->cerrarConexion();
+            return $resultado;
+        } 
+/*******************************************************************************************************************************************/        
+        
+        //INSERTAR usuario con nivel 2
+        public function insertar_usuario_con_licencia($nombre,
+                                                      $apellido,
+                                                      $email,
+                                                      $username,
+                                                      $password,
+                                                      $emailuser,
+                                                      
+                                                      $dni_enterprise, 
+                                                      $nu_tipo_entidad_doc_ent,
+                                                      $in_clasificacion_tipo_ent_doc_ent
+                                                      ){
+                                                          
+            //echo ("nu_tipo_entidad_prf: /".$this->nombre."/ " );
+            //echo ("nu_tipo_entidad_prf: /".$this->nu_tipo_entidad_prf."/ " );
+            //echo ("in_clasificacion_tipo_ent_prf: /".$this->in_clasificacion_tipo_ent_prf."/" );
+
+            if ($this->nu_tipo_entidad_prf==2){
+                
+
+            $sql1="INSERT INTO `persona`(`dni`,
+                                         `nu_tipo_entidad_doc`,
+                                         `in_clasificacion_tipo_ent_doc`, 
+                                         `nombre`, 
+                                         `apellido`, 
+                                         `telefono`, 
+                                         `direccion`, 
+                                         `email`) 
+                                    VALUES (0,
+                                          1,
+                                         'CDC',
+                                         '$nombre',
+                                         '$apellido',
+                                         '',
+                                         '',
+                                         '$email')";
+            
+            //echo ($sql1);
+            
+            $this->abrirConexion();
+            
+            $resultado = $this->conexion->query($sql1);
+            
+            
+            if (!$resultado){
+                echo ("error guardar persona, no se Guardo");
+                die($this->conexion->error);
+            }
+
+
+            $usuario="INSERT INTO `usuario`(`ID_Usuario`,
+                                        `dni`,
+                                        `nu_tipo_entidad_doc`, 
+                                        `in_clasificacion_tipo_ent_doc`, 
+                                        `username`, 
+                                        `password`, 
+                                        `emailuser`, 
+                                        `nu_tipo_entidad_prf`, 
+                                        `in_clasificacion_tipo_ent_prf`, 
+                                        `nu_tipo_entidad_sta`, 
+                                        `in_clasificacion_tipo_ent_sta`, 
+                                        `nu_tipo_entidad_set`, 
+                                        `in_clasificacion_tipo_ent_set`, 
+                                        `dni_enterprise`, 
+                                        `nu_tipo_entidad_doc_ent`, 
+                                        `in_clasificacion_tipo_ent_doc_ent`) 
+                                    VALUES (null,
+                                            0,
+                                            1,
+                                            'CDC',
+                                            '$username',
+                                            '$password',
+                                            '$emailuser',
+                                            3,
+                                            'ANI',
+                                            2,
+                                            'INC',
+                                            2,
+                                            'NEG',
+                                            '$dni_enterprise',
+                                            $nu_tipo_entidad_doc_ent,
+                                            '$in_clasificacion_tipo_ent_doc_ent')";
+//echo $usuario;
+
+            $resultado = $this->conexion->query("$usuario") or die($this->conexion->error);
+
+            }
+            
+            $this->cerrarConexion();            
+            return $resultado ? true : false;
+        }
+        
     }
-    
-
-
-
-
-
 
 
 ?>
