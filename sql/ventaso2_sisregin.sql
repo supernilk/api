@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 02-02-2023 a las 14:52:00
+-- Tiempo de generación: 04-02-2023 a las 13:09:19
 -- Versión del servidor: 5.7.23-23
 -- Versión de PHP: 7.4.30
 
@@ -41,7 +41,8 @@ CREATE TABLE `enterprise` (
 
 INSERT INTO `enterprise` (`dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tipo_ent_doc`, `Website`) VALUES
 ('1', 7, 'RIF', 'Ventasonlinevip.com'),
-('2', 6, 'NIT', '');
+('2', 6, 'NIT', ''),
+('3', 5, 'RUT', '');
 
 -- --------------------------------------------------------
 
@@ -102,7 +103,8 @@ CREATE TABLE `licencias` (
 INSERT INTO `licencias` (`id`, `dni`, `nu_tipo_ent_doc`, `in_clasificacion_tipo_ent_doc`, `password`, `emailuser`, `nu_tipo_entidad_sta`, `in_clasificacion_tipo_ent_sta`) VALUES
 (1, 'V23166229', 3, 'CDV', 'V23166229', 'tonytarco@hotmail.com', 2, 'INC'),
 (2, 'C123456', 1, 'CDC', 'C123456', 'jtorres@gmail.com', 1, 'ACT'),
-(3, 'C123', 3, 'CDC', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 1, 'ACT');
+(3, 'C123', 3, 'CDC', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 1, 'ACT'),
+(8, '0', 1, 'CDC', 'miContracena', 'miCorreoUsuario', 1, 'ACT');
 
 -- --------------------------------------------------------
 
@@ -131,9 +133,8 @@ INSERT INTO `persona` (`id`, `dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tip
 (2, 'J-403961441', 7, 'RIF', 'Xtreme Thecnology', 'Electronics C.A', 'no dio', 'no dio', 'no dio'),
 (3, 'C123456', 1, 'CDC', 'Jorge', 'Torres', '3155315361', 'no dio', 'jtorres@gmail.com'),
 (4, 'C123', 1, 'CDC', 'G', 'Toledo', NULL, NULL, 'gtoledo@consultoriaeconomicasas.com'),
-(8, '0', 1, 'CDC', 'miNombre', 'miApellido', '', '', 'miCorreo'),
-(7, '0', 1, 'CDC', 'miNombre', 'miApellido', '', '', 'miCorreo'),
-(9, '0', 1, 'CDC', 'miNombre', 'miApellido', '', '', 'miCorreo');
+(24, '0', 1, 'CDC', 'miNombre', 'miApellido', '', '', 'miCorreoUsuario'),
+(23, '3', 5, 'RUT', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -368,7 +369,123 @@ INSERT INTO `tipo_entidad` (`nu_tipo_entidad`, `in_clasificacion_tipo_ent`, `nu_
 (2, 'LOC', 11, 'LOC', 'test3', '1', 6, 'NIT', 1, 'ACT', 1, 'PRM'),
 (1, 'LOC', 11, 'LOC', 'test2', '1', 6, 'NIT', 2, 'INC', 1, 'PRM'),
 (3, 'LOC', 11, 'LOC', 'Test con PRY', '1', 6, 'NIT', 2, 'INC', 2, 'SEC'),
-(2, 'CNT', 8, 'CNT', 'DESCRIPCION ACTUALIZADA', '1', 6, 'NIT', 1, 'ACT', 2, 'SEC');
+(2, 'CNT', 8, 'CNT', 'DESCRIPCION ACTUALIZADA', '1', 6, 'NIT', 1, 'ACT', 2, 'SEC'),
+(0, 'CN0', 8, 'CNT', '', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(1, 'CN1', 8, 'CNT', '1A3D', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(2, 'CN2', 8, 'CNT', '1A3P', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(3, 'CN3', 8, 'CNT', '1A6P', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(4, 'CN4', 8, 'CNT', '1A7P', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(6, 'CN6', 8, 'CNT', '1A8P', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(7, 'CN7', 8, 'CNT', '1A9D', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(8, 'CN8', 8, 'CNT', '1A9P', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(9, 'CN9', 8, 'CNT', '1AFD', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(10, 'CM0', 8, 'CNT', '1AFP', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(11, 'CM1', 8, 'CNT', '1AID', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(12, 'CM2', 8, 'CNT', '1AIP', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(13, 'CM3', 8, 'CNT', '1AJD', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(14, 'CM4', 8, 'CNT', '1AJP', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(0, 'AL0', 9, 'ALM', '', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(1, 'AL1', 9, 'ALM', '1000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(3, 'AL3', 9, 'ALM', '3000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(4, 'AL4', 9, 'ALM', '4000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(5, 'AL5', 9, 'ALM', '4100', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(6, 'AL6', 9, 'ALM', '5000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(7, 'AL7', 9, 'ALM', '6000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(8, 'AL8', 9, 'ALM', '6001', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(9, 'AL9', 9, 'ALM', '6002', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(10, 'AK1', 9, 'ALM', '7000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(11, 'AK2', 9, 'ALM', '9000', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(12, 'AK3', 9, 'ALM', '9100', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(1, 'B01', 11, 'LOC', 'B01', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(2, 'B02', 11, 'LOC', 'B02', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(3, 'B03', 11, 'LOC', 'B03', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(4, 'B04', 11, 'LOC', 'B04', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(5, 'B05', 11, 'LOC', 'B05', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(6, 'C01', 11, 'LOC', 'B06', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(7, 'C02', 11, 'LOC', 'B07', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(8, 'C03', 11, 'LOC', 'B08', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(9, 'C04', 11, 'LOC', 'B09', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(10, 'C05', 11, 'LOC', 'B10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(11, 'C06', 11, 'LOC', 'B11', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(12, 'C07', 11, 'LOC', 'B12', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(13, 'C08', 11, 'LOC', 'B13', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(14, 'C09', 11, 'LOC', 'B14', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(15, 'C10', 11, 'LOC', 'B15', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(16, 'C11', 11, 'LOC', 'C01', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(17, 'C12', 11, 'LOC', 'C02', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(18, 'C13', 11, 'LOC', 'C03', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(19, 'C14', 11, 'LOC', 'C04', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(20, 'C15', 11, 'LOC', 'C05', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(21, 'C16', 11, 'LOC', 'C06', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(22, 'C17', 11, 'LOC', 'C07', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(23, 'C18', 11, 'LOC', 'C08', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(24, 'C19', 11, 'LOC', 'C09', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(25, 'C20', 11, 'LOC', 'C10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(26, 'C21', 11, 'LOC', 'C11', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(27, 'C22', 11, 'LOC', 'C12', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(28, 'C23', 11, 'LOC', 'C13', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(29, 'C24', 11, 'LOC', 'C14', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(30, 'C25', 11, 'LOC', 'C15', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(31, 'C26', 11, 'LOC', 'C16', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(32, 'C27', 11, 'LOC', 'C17', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(33, 'C28', 11, 'LOC', 'C18', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(34, 'C29', 11, 'LOC', 'C19', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(35, 'C30', 11, 'LOC', 'C20', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(36, 'C31', 11, 'LOC', 'C21', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(37, 'C32', 11, 'LOC', 'C22', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(38, 'C33', 11, 'LOC', 'C23', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(39, 'C34', 11, 'LOC', 'C24', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(40, 'C35', 11, 'LOC', 'C25', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(41, 'C36', 11, 'LOC', 'C26', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(42, 'C37', 11, 'LOC', 'C27', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(43, 'C38', 11, 'LOC', 'C28', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(44, 'C39', 11, 'LOC', 'C29', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(45, 'C40', 11, 'LOC', 'C30', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(46, 'C41', 11, 'LOC', 'C31', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(47, 'C42', 11, 'LOC', 'C32', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(48, 'C43', 11, 'LOC', 'C33', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(49, 'C44', 11, 'LOC', 'C34', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(50, 'C45', 11, 'LOC', 'C35', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(51, 'C46', 11, 'LOC', 'C36', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(52, 'C47', 11, 'LOC', 'C37', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(53, 'C48', 11, 'LOC', 'C38', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(54, 'C49', 11, 'LOC', 'C39', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(55, 'C50', 11, 'LOC', 'C40', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(56, 'C51', 11, 'LOC', 'P01', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(57, 'C52', 11, 'LOC', 'P02', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(58, 'C53', 11, 'LOC', 'P03', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(59, 'C54', 11, 'LOC', 'P04', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(60, 'C55', 11, 'LOC', 'P05', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(61, 'C56', 11, 'LOC', 'P06', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(62, 'C57', 11, 'LOC', 'P07', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(63, 'C58', 11, 'LOC', 'P08', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(64, 'C59', 11, 'LOC', 'P09', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(65, 'C60', 11, 'LOC', 'P10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(66, 'P01', 11, 'LOC', 'P11', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(67, 'P02', 11, 'LOC', 'P12', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(68, 'P03', 11, 'LOC', 'P13', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(69, 'P04', 11, 'LOC', 'P14', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(70, 'P05', 11, 'LOC', 'P15', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(71, 'LOC', 9, 'LOC', 'Rabano', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(72, 'LOC', 11, 'LOC', '', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(73, 'LOC', 11, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(74, 'LOC', 11, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(75, 'LOC', 11, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(76, 'LOC', 11, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(77, 'LOC', 0, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(78, 'LOC', 7, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(79, 'LOC', 7, 'LOC', 'A10', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(80, 'LOC', 7, 'LOC', 'A101', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(81, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(82, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(83, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(84, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(85, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(86, 'LOC', 11, 'LOC', 'sNILK', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(87, 'LOC', 11, 'LOC', 'test', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(88, 'LOC', 11, 'LOC', 'test2', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(89, 'LOC', 11, 'LOC', 'test2', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM'),
+(90, 'LOC', 11, 'LOC', 'test2', 'J-403961441', 7, 'RIF', 1, 'ACT', 1, 'PRM');
 
 -- --------------------------------------------------------
 
@@ -389,8 +506,8 @@ CREATE TABLE `token` (
 
 INSERT INTO `token` (`ID`, `ID_Usuario`, `token`, `fechaTope`) VALUES
 (45, '1', '175b02836eb06f7ddc10e494c8c680c757cdb81d94b5071811008cce2c32cb47', '1675457724'),
-(46, '3', 'e1f0c9991f7078f3a50ab0aafd923308a0beb7df469968bac4325215514b6031', '1675715583'),
-(48, '2', 'b832f68b67d4289234148e6c1b7dc96701cc7e21c9c22b93b9e5e3abb4a1c027', '1675813253');
+(50, '2', '1f502026bafbaf0064295f6f323f7070076ebab8e86c4cbf2a64814e3310711b', '1675988828'),
+(51, '3', 'f9024f159eed35cb2d57aaa75ec65eff674e30398b466e6c459a214be01a1a5b', '1676042626');
 
 -- --------------------------------------------------------
 
@@ -425,7 +542,7 @@ INSERT INTO `usuario` (`ID_Usuario`, `dni`, `nu_tipo_entidad_doc`, `in_clasifica
 (1, 'V23166229', 3, 'CDV', 'TTARCO', 'V23166229', 'tonytarco@hotmail.com', 2, 'GGB', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
 (2, 'C123456', 1, 'CDC', 'JTORRES', 'C123456', 'jtorres@gmail.com', 1, 'MNS', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
 (3, 'C123', 1, 'CDC', 'GTOLEDO', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 3, 'ANI', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
-(5, '0', 1, 'CDC', 'miUsuarioNombre', 'miContracena', 'miCorreoUsuario', 3, 'ANI', 2, 'INC', 2, 'NEG', '1', 7, 'RIF');
+(11, '0', 1, 'CDC', 'miUsuarioNombre', 'miContracena', 'miCorreoUsuario', 0, '', 2, 'INC', 2, 'NEG', '3', 5, 'RUT');
 
 --
 -- Índices para tablas volcadas
@@ -464,25 +581,25 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `licencias`
 --
 ALTER TABLE `licencias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `token`
 --
 ALTER TABLE `token`
-  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `ID_Usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ID_Usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

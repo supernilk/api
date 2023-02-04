@@ -44,7 +44,7 @@
                             echo json_encode($resultado);
                     }
                     
-                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='roles')){
+                }elseif(isset($_GET["consulta"]) && ($_GET["consulta"] =='Roles')){
 
                         $usuario = new Usuario();
                         if ($usuario->consultarToken($_GET["tkn"])){
@@ -101,16 +101,18 @@
 
         case 'POST':
 /**************************************************************************************/
-            if (isset($_GET["consulta"]) && ($_GET["consulta"]=="insertar")){
-
+            if (isset($_GET["consulta"]) && ($_GET["consulta"]=="Insertar")){
+//echo "ok1\n";
                     if (isset($_GET["dni_enterprise"]) &&
                         isset($_GET["nu_tipo_entidad_doc_ent"]) &&
                         isset($_GET["in_clasificacion_tipo_ent_doc_ent"])){
 
                         $usuario = new Usuario();
                         if ($usuario->consultarToken($_GET["tkn"])){
-                            http_response_code(200);
-                            $raws = $usuario->insertar_usuario_con_licencia($_GET["nombre"],
+//echo "ok2\n";
+
+                            
+                        $consulta= $usuario->insertar_usuario_con_licencia ($_GET["nombre"],
                                                                             $_GET["apellido"],
                                                                             $_GET["email"],
                                                                             $_GET["username"],
@@ -121,22 +123,33 @@
                                                                             $_GET["nu_tipo_entidad_doc_ent"],
                                                                             $_GET["in_clasificacion_tipo_ent_doc_ent"]
                                                                             );
-
-                            echo (json_encode($raws));
+                        if ($consulta){
+                            http_response_code(200);
+                            $resultado["codigoResultado"] = "1";
+                            $resultado["mensaje"] = "Insercion realizada con exito";
                         }else{
-                            // Toquen invalido
                             http_response_code(404);
                             $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Error en la Insercion";
+                        }
+                        
+                        echo json_encode($resultado);
+                        }else{
+                            // Toquen invalido
+                            
+                            $resultado["codigoResultado"] = "0";
                             $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                            http_response_code(404);
                             echo json_encode($resultado);
                         }
                         
                             
                     }else{
                             // Faltan los datos de empresa
-                            http_response_code(404);
+                            
                             $resultado["codigoResultado"] = "0";
                             $resultado["mensaje"] = "Faltan Datos de la empresa  (dni_enterprise,nu_tipo_entidad_doc_ent,in_clasificacion_tipo_ent_doc_ent)";
+                            http_response_code(404);
                             echo json_encode($resultado);
                     }
 /**************************************************************************************/

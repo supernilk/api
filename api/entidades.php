@@ -170,8 +170,17 @@
                                                           $_POST["in_clasificacion_tipo_ent_pry"]
                                                           );
 
-
-                    echo json_encode($resultado);
+                        if ($consulta){
+                            http_response_code(200);
+                            $resultado["codigoResultado"] = "1";
+                            $resultado["mensaje"] = "Insercion realizada con exito";
+                        }else{
+                            http_response_code(404);
+                            $resultado["codigoResultado"] = "0";
+                            $resultado["mensaje"] = "Error en la Insercion";
+                        }
+                        
+                        echo json_encode($resultado);
 
                 }else{
                     // Toquen invalido, no esta autorizado

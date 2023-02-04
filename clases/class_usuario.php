@@ -63,7 +63,9 @@
 
         //INSERTAR en la BD
         public function insertar($tabla,$datos){
-            $resultado = $this->conexion->query("INSERT INTO $tabla VALUES (null,$datos)") or die($this->conexion->error);
+            //echo ("tabla: $tabla  datos: $datos \n");
+            //echo ("INSERT INTO $tabla VALUES ($datos)");
+            $resultado = $this->conexion->query("INSERT INTO $tabla VALUES ($datos)") or die($this->conexion->error);
             return $resultado ? true : false;
         }
 
@@ -98,29 +100,38 @@
         public function consultarToken($token_a_comparar)
         {
             $this->abrirConexion();
-
-            $sql="SELECT * FROM token t JOIN usuario u ON t.ID_Usuario=u.ID_Usuario WHERE t.token ='$token_a_comparar'";
             
-            //print_r($sql);
+            $sql="SELECT COUNT(t.ID_Usuario) as n_filas, 
+			                u.username, 
+                            u.ID_Usuario,
+                            u.nu_tipo_entidad_prf, 
+                            u.in_clasificacion_tipo_ent_prf 
+                        FROM token t JOIN usuario u ON t.ID_Usuario=u.ID_Usuario 
+                        WHERE t.token ='$token_a_comparar'";
+                        
+            //print_r($sql."\n");
             
             $resultado = $this->conexion->query($sql) or die($this->conexion->error);
 
             $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
-
-            //print_r("nombre = ".$resultado[0]["username"]);
-
-            //$result = count($resultado);
             
+            // muestar la cantidad de filas encontradas
+            $n_filas=$resultado[0]["n_filas"];
 
-            if (count($resultado) >0){
+            $this->cerrarConexion();
+            
+            if ($n_filas==1){
+                //echo "token valido\n";
                 $this->ID_usuario=intval($resultado[0]["ID_Usuario"]);
                 $this->nombre=$resultado[0]["username"];
                 $this->nu_tipo_entidad_prf = $resultado[0]["nu_tipo_entidad_prf"];
                 $this->in_clasificacion_tipo_ent_prf = $resultado[0]["in_clasificacion_tipo_ent_prf"];
+
+            }else{
+                //echo "token no valido\n";
             }
 
-            $this->cerrarConexion();
-            return $resultado > 0 ? true : false;
+            return ($n_filas==1) ? true : false;
         }
 
 
@@ -346,74 +357,156 @@
             //echo ("nu_tipo_entidad_prf: /".$this->nu_tipo_entidad_prf."/ " );
             //echo ("in_clasificacion_tipo_ent_prf: /".$this->in_clasificacion_tipo_ent_prf."/" );
 
-            if ($this->nu_tipo_entidad_prf==2){
-                
+//echo ("insertar_usuario_con_licencia \n");
+//echo ("nu_tipo_entidad_prf: ".$this->nu_tipo_entidad_prf." \n");
 
-            $sql1="INSERT INTO `persona`(`dni`,
-                                         `nu_tipo_entidad_doc`,
-                                         `in_clasificacion_tipo_ent_doc`, 
-                                         `nombre`, 
-                                         `apellido`, 
-                                         `telefono`, 
-                                         `direccion`, 
-                                         `email`) 
-                                    VALUES (0,
-                                          1,
-                                         'CDC',
-                                         '$nombre',
-                                         '$apellido',
-                                         '',
-                                         '',
-                                         '$email')";
-            
-            //echo ($sql1);
-            
             $this->abrirConexion();
             
-            $resultado = $this->conexion->query($sql1);
-            
-            
-            if (!$resultado){
-                echo ("error guardar persona, no se Guardo");
-                die($this->conexion->error);
-            }
+//************************************  nu_tipo_entidad_prf = 1 ****************************************** */
+            if ($this->nu_tipo_entidad_prf==1){
+
+//echo ("nu_tipo_entidad_prf==1");
+
+                // creamos un nuevo dni, el ultimo valor valido 
+                $sql = "SELECT MAX(dni) as dni FROM `enterprise`";
+
+                $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+    
+                $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+    
+                // lo guardamos en la variabl dni
+                $dni= intval($resultado[0]['dni'])+1;
+
+                
+                $this->insertar("enterprise","$dni,5,'RUT',''");
+
+                $this->insertar("persona","0,$dni,5,'RUT','','','','',''");
+                
+                $this->insertar("usuario","0, 
+                                           0, 
+                                           1, 
+                                           'CDC',
+                                           '$username', 
+                                           '$password',
+                                           '$emailuser',
+                                           '$nu_tipo_entidad_prf',
+                                           '$in_clasificacion_tipo_ent_prf',
+                                           2,
+                                           'INC',
+                                           2,
+                                           'NEG',
+                                           $dni,
+                                           5,
+                                           'RUT'");
+
+                $this->insertar("persona","0,0,1,'CDC','$nombre','$apellido','','','$emailuser'");
+                
+                $this->insertar("licencias","0,0,1,'CDC','$password','$emailuser',1,'ACT'");
+                
+                // plantilla temporal de tony
+                $sql = "SELECT `nu_tipo_entidad`,
+                               `in_clasificacion_tipo_ent`,
+                               `nu_entidad`,
+                               `in_clasificacion_ent`, 
+                               `descripcion`,
+                               `nu_tipo_entidad_sta`,
+                               `in_clasificacion_tipo_ent_sta`,
+                               `nu_tipo_entidad_pry`,
+                               `in_clasificacion_tipo_ent_pry`
+                            FROM `tipo_entidad`
+                            where `dni_enterprise`='1' AND
+                              `nu_tipo_entidad_doc_ent`=7 AND
+                              `in_clasificacion_tipo_ent_doc_ent`='RIF' AND 
+                              `nu_tipo_entidad_sta`=1 AND
+                              `in_clasificacion_tipo_ent_sta` = 'ACT' AND 
+                              `in_clasificacion_ent` in ('CNT','LOC','ALM')";
+
+                $resultado = $this->conexion->query($sql) or die($this->conexion->error);
+    
+                $resultado = $resultado->fetch_all(MYSQLI_ASSOC);
+    
+                foreach($resultado as $Row)
+                	{
+                    $values=$Row['nu_tipo_entidad'].",".
+                        "'".$Row['in_clasificacion_tipo_ent']."',".
+                            $Row['nu_entidad'].",".
+                        "'".$Row['in_clasificacion_ent']."',".
+                        "'".$Row['descripcion']."',".
+                        "'".$dni_enterprise."',".
+                            $nu_tipo_entidad_doc_ent.",".
+                        "'".$in_clasificacion_tipo_ent_doc_ent."',".
+                            $Row['nu_tipo_entidad_sta'].",".
+                        "'".$Row['in_clasificacion_tipo_ent_sta']."',".
+                            $Row['nu_tipo_entidad_pry'].",".
+                        "'".$Row['in_clasificacion_tipo_ent_pry']."'";
+                    
+                	$this->insertar("tipo_entidad",$values);
+                	}
 
 
-            $usuario="INSERT INTO `usuario`(`ID_Usuario`,
-                                        `dni`,
-                                        `nu_tipo_entidad_doc`, 
-                                        `in_clasificacion_tipo_ent_doc`, 
-                                        `username`, 
-                                        `password`, 
-                                        `emailuser`, 
-                                        `nu_tipo_entidad_prf`, 
-                                        `in_clasificacion_tipo_ent_prf`, 
-                                        `nu_tipo_entidad_sta`, 
-                                        `in_clasificacion_tipo_ent_sta`, 
-                                        `nu_tipo_entidad_set`, 
-                                        `in_clasificacion_tipo_ent_set`, 
-                                        `dni_enterprise`, 
-                                        `nu_tipo_entidad_doc_ent`, 
-                                        `in_clasificacion_tipo_ent_doc_ent`) 
-                                    VALUES (null,
-                                            0,
+//************************************  nu_tipo_entidad_prf = 2 ****************************************** */
+            }elseif($this->nu_tipo_entidad_prf==2){
+                
+                $sql1="INSERT INTO `persona`(`dni`,
+                                            `nu_tipo_entidad_doc`,
+                                            `in_clasificacion_tipo_ent_doc`, 
+                                            `nombre`, 
+                                            `apellido`, 
+                                            `telefono`, 
+                                            `direccion`, 
+                                            `email`) 
+                                        VALUES (0,
                                             1,
                                             'CDC',
-                                            '$username',
-                                            '$password',
-                                            '$emailuser',
-                                            3,
-                                            'ANI',
-                                            2,
-                                            'INC',
-                                            2,
-                                            'NEG',
-                                            '$dni_enterprise',
-                                            $nu_tipo_entidad_doc_ent,
-                                            '$in_clasificacion_tipo_ent_doc_ent')";
-//echo $usuario;
+                                            '$nombre',
+                                            '$apellido',
+                                            '',
+                                            '',
+                                            '$email')";
 
-            $resultado = $this->conexion->query("$usuario") or die($this->conexion->error);
+                $resultado = $this->conexion->query($sql1);
+                
+                if (!$resultado){
+                    echo ("error guardar persona, no se Guardo");
+                    die($this->conexion->error);
+                }
+
+
+                $usuario="INSERT INTO `usuario`(`ID_Usuario`,
+                                            `dni`,
+                                            `nu_tipo_entidad_doc`, 
+                                            `in_clasificacion_tipo_ent_doc`, 
+                                            `username`, 
+                                            `password`, 
+                                            `emailuser`, 
+                                            `nu_tipo_entidad_prf`, 
+                                            `in_clasificacion_tipo_ent_prf`, 
+                                            `nu_tipo_entidad_sta`, 
+                                            `in_clasificacion_tipo_ent_sta`, 
+                                            `nu_tipo_entidad_set`, 
+                                            `in_clasificacion_tipo_ent_set`, 
+                                            `dni_enterprise`, 
+                                            `nu_tipo_entidad_doc_ent`, 
+                                            `in_clasificacion_tipo_ent_doc_ent`) 
+                                        VALUES (null,
+                                                0,
+                                                1,
+                                                'CDC',
+                                                '$username',
+                                                '$password',
+                                                '$emailuser',
+                                                3,
+                                                'ANI',
+                                                2,
+                                                'INC',
+                                                2,
+                                                'NEG',
+                                                '$dni_enterprise',
+                                                $nu_tipo_entidad_doc_ent,
+                                                '$in_clasificacion_tipo_ent_doc_ent')";
+    //echo $usuario;
+
+                $resultado = $this->conexion->query("$usuario") or die($this->conexion->error);
 
             }
             

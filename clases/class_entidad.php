@@ -159,7 +159,7 @@
             // calcular el valor de nu_tipo_entidad
             $nu_tipo_entidad=0;
             
-            $sql = "SELECT max(nu_tipo_entidad) AS valorMax FROM `tipo_entidad` WHERE nu_entidad = '$nu_entidad' AND
+            $sql = "SELECT MAX(nu_tipo_entidad) AS valorMax FROM `tipo_entidad` WHERE nu_entidad = '$nu_entidad' AND
                                                                                      `in_clasificacion_ent` = '$in_clasificacion_ent' AND
                                                                                       dni_enterprise = '$dni_enterprise' AND 
                                                                                       nu_tipo_entidad_doc_ent = $nu_tipo_entidad_doc_ent AND 
