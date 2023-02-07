@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 04-02-2023 a las 13:09:19
+-- Tiempo de generación: 07-02-2023 a las 06:49:13
 -- Versión del servidor: 5.7.23-23
 -- Versión de PHP: 7.4.30
 
@@ -41,8 +41,7 @@ CREATE TABLE `enterprise` (
 
 INSERT INTO `enterprise` (`dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tipo_ent_doc`, `Website`) VALUES
 ('1', 7, 'RIF', 'Ventasonlinevip.com'),
-('2', 6, 'NIT', ''),
-('3', 5, 'RUT', '');
+('2', 6, 'NIT', '');
 
 -- --------------------------------------------------------
 
@@ -103,8 +102,7 @@ CREATE TABLE `licencias` (
 INSERT INTO `licencias` (`id`, `dni`, `nu_tipo_ent_doc`, `in_clasificacion_tipo_ent_doc`, `password`, `emailuser`, `nu_tipo_entidad_sta`, `in_clasificacion_tipo_ent_sta`) VALUES
 (1, 'V23166229', 3, 'CDV', 'V23166229', 'tonytarco@hotmail.com', 2, 'INC'),
 (2, 'C123456', 1, 'CDC', 'C123456', 'jtorres@gmail.com', 1, 'ACT'),
-(3, 'C123', 3, 'CDC', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 1, 'ACT'),
-(8, '0', 1, 'CDC', 'miContracena', 'miCorreoUsuario', 1, 'ACT');
+(3, 'C123', 3, 'CDC', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 1, 'ACT');
 
 -- --------------------------------------------------------
 
@@ -132,9 +130,7 @@ INSERT INTO `persona` (`id`, `dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tip
 (1, 'V23166229', 3, 'CDV', 'Tony Richard', 'Tarco Tineo', '3207609961', 'calle 21 #105A05 Bogotá ', 'tonytarco@hotmail.com'),
 (2, 'J-403961441', 7, 'RIF', 'Xtreme Thecnology', 'Electronics C.A', 'no dio', 'no dio', 'no dio'),
 (3, 'C123456', 1, 'CDC', 'Jorge', 'Torres', '3155315361', 'no dio', 'jtorres@gmail.com'),
-(4, 'C123', 1, 'CDC', 'G', 'Toledo', NULL, NULL, 'gtoledo@consultoriaeconomicasas.com'),
-(24, '0', 1, 'CDC', 'miNombre', 'miApellido', '', '', 'miCorreoUsuario'),
-(23, '3', 5, 'RUT', '', '', '', '', '');
+(4, 'C123', 1, 'CDC', 'G', 'Toledo', NULL, NULL, 'gtoledo@consultoriaeconomicasas.com');
 
 -- --------------------------------------------------------
 
@@ -505,9 +501,9 @@ CREATE TABLE `token` (
 --
 
 INSERT INTO `token` (`ID`, `ID_Usuario`, `token`, `fechaTope`) VALUES
-(45, '1', '175b02836eb06f7ddc10e494c8c680c757cdb81d94b5071811008cce2c32cb47', '1675457724'),
-(50, '2', '1f502026bafbaf0064295f6f323f7070076ebab8e86c4cbf2a64814e3310711b', '1675988828'),
-(51, '3', 'f9024f159eed35cb2d57aaa75ec65eff674e30398b466e6c459a214be01a1a5b', '1676042626');
+(72, '3', 'cef1e62b1dc7a56bbb0cd4aa36f2efbb6abaa11ac9c296bbe7cab1261ab65ddc', '1676244048'),
+(74, '2', '2eb64f562b729ea324e2a72c2074351fc52e52df8c4aea52325cae3edfeaee95', '1676248071'),
+(75, '1', '92752afe658c92dd3bc628c3e51bdc81020135a886f0f502ab9e92706cb4b9da', '1676248806');
 
 -- --------------------------------------------------------
 
@@ -531,18 +527,19 @@ CREATE TABLE `usuario` (
   `in_clasificacion_tipo_ent_set` varchar(3) DEFAULT NULL,
   `dni_enterprise` varchar(15) DEFAULT NULL,
   `nu_tipo_entidad_doc_ent` int(8) DEFAULT NULL,
-  `in_clasificacion_tipo_ent_doc_ent` varchar(3) DEFAULT NULL
+  `in_clasificacion_tipo_ent_doc_ent` varchar(3) DEFAULT NULL,
+  `fecha_exp_lic` date NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`ID_Usuario`, `dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tipo_ent_doc`, `username`, `password`, `emailuser`, `nu_tipo_entidad_prf`, `in_clasificacion_tipo_ent_prf`, `nu_tipo_entidad_sta`, `in_clasificacion_tipo_ent_sta`, `nu_tipo_entidad_set`, `in_clasificacion_tipo_ent_set`, `dni_enterprise`, `nu_tipo_entidad_doc_ent`, `in_clasificacion_tipo_ent_doc_ent`) VALUES
-(1, 'V23166229', 3, 'CDV', 'TTARCO', 'V23166229', 'tonytarco@hotmail.com', 2, 'GGB', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
-(2, 'C123456', 1, 'CDC', 'JTORRES', 'C123456', 'jtorres@gmail.com', 1, 'MNS', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
-(3, 'C123', 1, 'CDC', 'GTOLEDO', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 3, 'ANI', 2, 'INC', 2, 'NEG', '1', 7, 'RIF'),
-(11, '0', 1, 'CDC', 'miUsuarioNombre', 'miContracena', 'miCorreoUsuario', 0, '', 2, 'INC', 2, 'NEG', '3', 5, 'RUT');
+INSERT INTO `usuario` (`ID_Usuario`, `dni`, `nu_tipo_entidad_doc`, `in_clasificacion_tipo_ent_doc`, `username`, `password`, `emailuser`, `nu_tipo_entidad_prf`, `in_clasificacion_tipo_ent_prf`, `nu_tipo_entidad_sta`, `in_clasificacion_tipo_ent_sta`, `nu_tipo_entidad_set`, `in_clasificacion_tipo_ent_set`, `dni_enterprise`, `nu_tipo_entidad_doc_ent`, `in_clasificacion_tipo_ent_doc_ent`, `fecha_exp_lic`) VALUES
+(1, 'V23166229', 3, 'CDV', 'TTARCO', 'V23166229', 'tonytarco@hotmail.com', 2, 'GGB', 2, 'INC', 2, 'NEG', '1', 7, 'RIF', '2024-03-25'),
+(2, 'C123456', 1, 'CDC', 'JTORRES', 'C123456', 'jtorres@gmail.com', 1, 'MNS', 2, 'INC', 2, 'NEG', '1', 7, 'RIF', '2024-02-08'),
+(3, 'C123', 1, 'CDC', 'GTOLEDO', 'S123456', 'gtoledo@consultoriaeconomicasas.com', 3, 'ANI', 2, 'INC', 2, 'NEG', '1', 7, 'RIF', '2023-03-03'),
+(11, '0', 1, 'CDC', 'miUsuarioNombre', 'miContracena', 'miCorreoUsuario', 0, '', 2, 'INC', 2, 'NEG', '3', 5, 'RUT', '2023-02-10');
 
 --
 -- Índices para tablas volcadas
@@ -593,7 +590,7 @@ ALTER TABLE `persona`
 -- AUTO_INCREMENT de la tabla `token`
 --
 ALTER TABLE `token`
-  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `ID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`

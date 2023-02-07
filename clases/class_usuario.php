@@ -6,6 +6,7 @@
         private $correo;
         private $password;
         private $token;
+        public  $fecha_exp_lic;
         
         public $nu_tipo_entidad_prf;
         public $in_clasificacion_tipo_ent_prf;
@@ -202,8 +203,12 @@
                 $this->ID_usuario=intval($rows[0]["ID_Usuario"]);
                 $this->nombre=$rows[0]["username"];
                 $this->token=$this->crearToken();
+                
+                $this->fecha_exp_lic = $rows[0]["fecha_exp_lic"];
+
                 $this->nu_tipo_entidad_prf = $rows[0]["nu_tipo_entidad_prf"];
                 $this->in_clasificacion_tipo_ent_prf = $rows[0]["in_clasificacion_tipo_ent_prf"];
+                
                 
                 $this->dni_enterprise = $rows[0]["dni_enterprise"];
                 $this->nu_tipo_entidad_doc_ent = $rows[0]["nu_tipo_entidad_doc_ent"];

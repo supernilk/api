@@ -172,6 +172,7 @@
                             "usuario" => array(
                                 "nombre" => $usuario->get_Nombre(),
                                 "correo" => $usuario->get_Correo(),
+                                "fecha_exp_lic" => $usuario->fecha_exp_lic,
                                 "nu_tipo_entidad_prf" => $usuario-> nu_tipo_entidad_prf,
                                 "in_clasificacion_tipo_ent_prf" => $usuario-> in_clasificacion_tipo_ent_prf,
                                 
