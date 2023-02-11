@@ -1,6 +1,5 @@
 <?php
 
-
    header('Access-Control-Allow-Origin: *');
    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
@@ -95,65 +94,156 @@
 
             }
             
-            
         break;
         
 
         case 'POST':
 /**************************************************************************************/
-            if (isset($_GET["consulta"]) && ($_GET["consulta"]=="Insertar")){
-//echo "ok1\n";
-                    if (isset($_GET["dni_enterprise"]) &&
-                        isset($_GET["nu_tipo_entidad_doc_ent"]) &&
-                        isset($_GET["in_clasificacion_tipo_ent_doc_ent"])){
 
-                        $usuario = new Usuario();
-                        if ($usuario->consultarToken($_GET["tkn"])){
-//echo "ok2\n";
+            // revisamos que tiene token
+            if (isset($_GET["tkn"])) {
+                $usuario = new Usuario();
+                if ($usuario->consultarToken($_GET["tkn"])){                       
+                    // aqui obtenemos el su rango
+//                    echo ("nombre:".$usuario->get_Nombre()." nu_tipo_entidad_prf:".$usuario->nu_tipo_entidad_prf."\n");
+                    
+                    if (isset($_GET["consulta"]) && ($_GET["consulta"]=="Insertar")){
+                        
+                        switch ($usuario->nu_tipo_entidad_prf) {
+                            case 1:
+//                                echo "el usuario es SuperAdmin"." \n";
 
-                            
-                        $consulta= $usuario->insertar_usuario_con_licencia ($_GET["nombre"],
-                                                                            $_GET["apellido"],
-                                                                            $_GET["email"],
-                                                                            $_GET["username"],
-                                                                            $_GET["password"],
-                                                                            $_GET["emailuser"],
-                                                      
-                                                                            $_GET["dni_enterprise"],
-                                                                            $_GET["nu_tipo_entidad_doc_ent"],
-                                                                            $_GET["in_clasificacion_tipo_ent_doc_ent"]
-                                                                            );
-                        if ($consulta){
-                            http_response_code(200);
-                            $resultado["codigoResultado"] = "1";
-                            $resultado["mensaje"] = "Insercion realizada con exito";
-                        }else{
-                            http_response_code(404);
-                            $resultado["codigoResultado"] = "0";
-                            $resultado["mensaje"] = "Error en la Insercion";
+                                    if (isset($_GET["nu_tipo_entidad_prf"])) { 
+
+                                        if ($_GET["nu_tipo_entidad_prf"]==1||$_GET["nu_tipo_entidad_prf"]==2){
+                                            // vamo a insertar tipo 1 o tipo 2
+                                            // proceso 2
+                                            echo "entrando a proceso2---\n";
+                                            if (isset($_GET["fecha"])){
+                                                //echo "fecha es:".$_GET["fecha"]."\n";
+                                                
+                                                $fecha = strtotime("+".$_GET["fecha"]);
+                                                //echo ("tiempo: $fecha".date("d-m-Y h:i:s a", $fecha));
+
+                                                if ($usuario->proceso2($_GET["nombre"],
+                                                                   $_GET["apellido"],
+                                                                   $_GET["email"],
+                                                                   $_GET["username"],
+                                                                   $_GET["password"],
+                                                                   $fecha,
+    
+                                                                   $_GET["nu_tipo_entidad_prf"],
+                                                                   $_GET["in_clasificacion_tipo_ent_prf"])){
+                           
+                                                    http_response_code(200);
+                                                    $resultado["codigoResultado"] = "1";
+                                                    $resultado["mensaje"] = "Insercion realizada con exito";
+                                                    
+                                                    echo json_encode($resultado);
+                                                }else{
+                                                    http_response_code(404);
+                                                    $resultado["codigoResultado"] = "0";
+                                                    $resultado["mensaje"] = "Error en la Insercion";
+                                                    
+                                                    echo json_encode($resultado);
+                                                }
+                                                
+                                                
+                                            }else{
+                                                echo "falta la fecha";
+                                            }
+                                        }
+                                        
+                                        if ($_GET["nu_tipo_entidad_prf"]==3){
+                                            // vamos a insertar tipo 3
+                                            // proceso 1
+//                                            echo "entrando a proceso2****\n";
+                                            if ($usuario->proceso1($_GET["nombre"],
+                                                               $_GET["apellido"],
+                                                               $_GET["email"],
+                                                               $_GET["username"],
+                                                               $_GET["password"],
+
+                                                               $usuario->dni_enterprise, 
+                                                               $usuario->nu_tipo_entidad_doc_ent,
+                                                               $usuario->in_clasificacion_tipo_ent_doc_ent)){
+                                                               
+                                                    http_response_code(200);
+                                                    $resultado["codigoResultado"] = "1";
+                                                    $resultado["mensaje"] = "Insercion realizada con exito";
+                                                    
+                                                    echo json_encode($resultado);
+                                                }else{
+                                                    http_response_code(404);
+                                                    $resultado["codigoResultado"] = "0";
+                                                    $resultado["mensaje"] = "Error en la Insercion";
+                                                    
+                                                    if ($usuario->nu_error)
+                                                        $resultado["error"] = $usuario->str_error;
+
+                                                    echo json_encode($resultado);
+                                                }
+
+
+                                        }
+                                    }
+                                
+                                break;
+                                
+                            case 2:
+                                echo "el usuario es UserAdmin"." \n";
+                                if (isset($_GET["nu_tipo_entidad_prf"]) && isset($_GET["in_clasificacion_tipo_ent_prf"])){
+                                
+                                    if ($_GET["nu_tipo_entidad_prf"]==3) { 
+                                        //echo "fecha------->".$usuario->fecha_exp_lic."<--------";
+                                        // vamos a insertar tipo 3
+                                        // proceso 1
+                                         
+                                        if ($usuario->proceso1($_GET["nombre"],
+                                                           $_GET["apellido"],
+                                                           $_GET["email"],
+                                                           $_GET["username"],
+                                                           $_GET["password"],
+
+                                                           $_GET["dni_enterprise"], 
+                                                           $_GET["nu_tipo_entidad_doc_ent"],
+                                                           $_GET["in_clasificacion_tipo_ent_doc_ent"])){
+                                                               
+                                            }
+                                        
+                                    }else{
+                                        // mostrar error: solo puede agregar Analista de Inventario
+                                        echo "error: solo puede agregar Analista de Inventario"." \n";
+                                    }
+
+                                }else{
+                                    echo "falta ingresar: nu_tipo_entidad_prf o in_clasificacion_tipo_ent_prf"." \n";
+                                }
+                                
+                                break;
+                                
+                            case 3:
+                                echo "el usuario es Analista de Inventario";
+                                // no hace nada
+                                break;
+                                
+                            default:
+                                echo "Error Valor No reconocido";                            
                         }
-                        
-                        echo json_encode($resultado);
-                        }else{
-                            // Toquen invalido
-                            
-                            $resultado["codigoResultado"] = "0";
-                            $resultado["mensaje"] = "Acceso Denegado, token invalido";
-                            http_response_code(404);
-                            echo json_encode($resultado);
-                        }
-                        
-                            
-                    }else{
-                            // Faltan los datos de empresa
-                            
-                            $resultado["codigoResultado"] = "0";
-                            $resultado["mensaje"] = "Faltan Datos de la empresa  (dni_enterprise,nu_tipo_entidad_doc_ent,in_clasificacion_tipo_ent_doc_ent)";
-                            http_response_code(404);
-                            echo json_encode($resultado);
+
                     }
-/**************************************************************************************/
+
+                }else{
+                    // Toquen invalido
+                    
+                    $resultado["codigoResultado"] = "0";
+                    $resultado["mensaje"] = "Acceso Denegado, token invalido";
+                    http_response_code(404);
+                    echo json_encode($resultado);
+                }            
+
             // Logueo 
+/**************************************************************************************/
             }elseif(isset($_POST["correo"])){
                 // Recibimos un Correo
                 if (isset($_POST["password"])){
@@ -161,10 +251,10 @@
                     $usuario = new Usuario();
                     $usuario->set_Correo($_POST["correo"]);
                     $usuario->set_Password($_POST["password"]);
-
+//echo "<---->1";
                     if ($usuario->consultarUsuario()){
                         http_response_code(200);
-
+//echo "<---->2";
                         $resultado=array(
                             "token"=>$usuario->get_Token(),
                             "codigoResultado"=>"1",
@@ -172,7 +262,9 @@
                             "usuario" => array(
                                 "nombre" => $usuario->get_Nombre(),
                                 "correo" => $usuario->get_Correo(),
-                                "fecha_exp_lic" => $usuario->fecha_exp_lic,
+                                //echo ("tiempo: $fecha".date("d-m-Y h:i:s a", $fecha));
+                                //"fecha_exp_lic" => $usuario->fecha_exp_lic,
+                                "fecha_exp_lic" => date("d-m-Y h:i:s a", $usuario->fecha_exp_lic),
                                 "nu_tipo_entidad_prf" => $usuario-> nu_tipo_entidad_prf,
                                 "in_clasificacion_tipo_ent_prf" => $usuario-> in_clasificacion_tipo_ent_prf,
                                 
@@ -205,29 +297,53 @@
             }
         break;
 
-
         case 'PUT':
-            //echo 'informacion: '. file_get_contents('php://input')."\n";
-            $_PUT = json_decode( file_get_contents('php://input'),true);
-            $resultado["mensaje"] = "Actualiza Datos del Usuario con el id: ".$_GET['id']. 
-                                    ", Informacion".json_encode($_PUT);
-            echo json_encode($resultado);
-
-            //echo "Actualiza Datos del Usuario: id: ".$_GET['id'];
+            echo ("modificarProceso1");
+            $usuario = new Usuario();
+            
+            //filtrar los datos de entrada con get, no puede ser vacios
+            $usuario->modificarProceso1( $_GET["username"],
+                                         $_GET["password"],
+                                         $_GET["emailuser"],
+                                          
+                                         $_GET["nuevoNombre"],
+                                         $_GET["nuevoApellido"],
+                                         $_GET["nuevoEmail"],
+                                          
+                                         $_GET["dni"],
+                                         $_GET["nu_tipo_entidad_doc"],
+                                         $_GET["in_clasificacion_tipo_ent_doc"],
+                                          
+                                         $_GET["dni_enterprise"],
+                                         $_GET["nu_tipo_entidad_doc_ent"],
+                                         $_GET["in_clasificacion_tipo_ent_doc_ent"]);
+                
+                
+            
         break;
 
-
-        // pendiente si el metodo es delete pero no manda id
-        // Eliminar un Usuario
-        // se envia un id del usuario a consultar
         case 'DELETE':
             $resultado["mensaje"] = "Eliminar el Usuario con el id: ".$_GET['id'];
             echo json_encode($resultado);
 
-            //echo "Borrar Datos del Usuario: id: ".$_GET['id'];
         break;
         default:
             echo "Error Metodo Request No aceptado";
     }
+
+    /*
+
+    // Armas el array
+    $nombres = array(
+    'nombre1' => $nombre1,
+    // y así le sigues con los que faltan
+    );
+ 
+    // Si lo quieres como parte de $row, entonces
+    $row = array_merge($row, $nombres);
+ 
+    // Y después lo agregas a $items dentro del while
+    array_push($items, $row);
     
+    */
 ?>
